@@ -19,15 +19,15 @@ class PointType extends AbstractType
             ->add('libelle')
             ->add('le_cv', EntityType::class, [
                 'class' => Cv::class,
-                'choice_label' => 'id',
+                'choice_label' => 'Titre',
             ])
             ->add('la_cate', EntityType::class, [
                 'class' => Categorie::class,
-                'choice_label' => 'id',
+                'choice_label' => 'libelle',
             ])
             ->add('un_lieu', EntityType::class, [
                 'class' => Lieu::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nom',
             ])
         ;
     }

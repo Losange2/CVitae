@@ -17,7 +17,7 @@ class LieuType extends AbstractType
             ->add('nom')
             ->add('le_type_l', EntityType::class, [
                 'class' => TypeDeLieu::class,
-                'choice_label' => 'id',
+                'choice_label' => 'libelle',
             ])
         ;
     }

@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}S'inscrire{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+    <h1>S'inscrire</h1>
 
     {{ form_errors(registrationForm) }}
 
@@ -17,6 +17,7 @@
         {{ form_row(registrationForm.adresse) }}
         {{ form_row(registrationForm.telephone) }}
         {{ form_row(registrationForm.date_de_naissance) }}
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="btn">S'inscrire</button>
     {{ form_end(registrationForm) }}
+    <p> Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous</a></p>
 {% endblock %}

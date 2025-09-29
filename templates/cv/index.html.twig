@@ -10,7 +10,9 @@
             <tr>
                 <th>Id</th>
                 <th>Titre</th>
+                {% if is_granted('ROLE_ADMIN') %}
                 <th>actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -19,8 +21,10 @@
                 <td>{{ cv.id }}</td>
                 <td>{{ cv.Titre }}</td>
                 <td>
+                    {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_cv_show', {'id': cv.id}) }}">show</a>
                     <a href="{{ path('app_cv_edit', {'id': cv.id}) }}">edit</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}

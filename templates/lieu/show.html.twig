@@ -18,9 +18,11 @@
         </tbody>
     </table>
 
+{% if is_granted('ROLE_ADMIN') %}
     <a href="{{ path('app_lieu_index') }}">back to list</a>
 
     <a href="{{ path('app_lieu_edit', {'id': lieu.id}) }}">edit</a>
 
     {{ include('lieu/_delete_form.html.twig') }}
+{% endif %}
 {% endblock %}

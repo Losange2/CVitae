@@ -64,4 +64,9 @@ class Reseau
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->lien;
+    }
 }

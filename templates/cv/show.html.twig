@@ -17,10 +17,13 @@
             </tr>
         </tbody>
     </table>
-
+{% if is_granted('ROLE_ADMIN') %}
     <a href="{{ path('app_cv_index') }}">back to list</a>
 
     <a href="{{ path('app_cv_edit', {'id': cv.id}) }}">edit</a>
+    
+
 
     {{ include('cv/_delete_form.html.twig') }}
+{% endif %}
 {% endblock %}

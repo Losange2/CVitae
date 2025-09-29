@@ -11,9 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/admin/cv')]
+#[Route('/cv')]
 final class CvController extends AbstractController
 {
+    
     #[Route(name: 'app_cv_index', methods: ['GET'])]
     public function index(CvRepository $cvRepository): Response
     {
@@ -21,6 +22,8 @@ final class CvController extends AbstractController
             'cvs' => $cvRepository->findAll(),
         ]);
     }
+
+
 
     #[Route('/new', name: 'app_cv_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -49,6 +52,7 @@ final class CvController extends AbstractController
             'cv' => $cv,
         ]);
     }
+
 
     #[Route('/{id}/edit', name: 'app_cv_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Cv $cv, EntityManagerInterface $entityManager): Response

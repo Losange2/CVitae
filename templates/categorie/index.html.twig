@@ -19,8 +19,10 @@
                 <td>{{ categorie.id }}</td>
                 <td>{{ categorie.libelle }}</td>
                 <td>
+                    {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_categorie_show', {'id': categorie.id}) }}">show</a>
                     <a href="{{ path('app_categorie_edit', {'id': categorie.id}) }}">edit</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
