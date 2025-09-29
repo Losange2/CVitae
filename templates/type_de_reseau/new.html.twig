@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New TypeDeReseau{% endblock %}
+
+{% block body %}
+    <h1>Create new TypeDeReseau</h1>
+
+    {{ include('type_de_reseau/_form.html.twig') }}
+
+    <a href="{{ path('app_type_de_reseau_index') }}">back to list</a>
+{% endblock %}

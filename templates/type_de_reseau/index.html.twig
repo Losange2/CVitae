@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TypeDeReseau index{% endblock %}
+
+{% block body %}
+    <h1>TypeDeReseau index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Logo</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for type_de_reseau in type_de_reseaus %}
+            <tr>
+                <td>{{ type_de_reseau.id }}</td>
+                <td>{{ type_de_reseau.nom }}</td>
+                <td>{{ type_de_reseau.logo }}</td>
+                <td>
+                    <a href="{{ path('app_type_de_reseau_show', {'id': type_de_reseau.id}) }}">show</a>
+                    <a href="{{ path('app_type_de_reseau_edit', {'id': type_de_reseau.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_type_de_reseau_new') }}">Create new</a>
+{% endblock %}

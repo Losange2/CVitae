@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New TypeDeLieu{% endblock %}
+
+{% block body %}
+    <h1>Create new TypeDeLieu</h1>
+
+    {{ include('type_de_lieu/_form.html.twig') }}
+
+    <a href="{{ path('app_type_de_lieu_index') }}">back to list</a>
+{% endblock %}

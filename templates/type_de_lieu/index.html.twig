@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TypeDeLieu index{% endblock %}
+
+{% block body %}
+    <h1>TypeDeLieu index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Libelle</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for type_de_lieu in type_de_lieus %}
+            <tr>
+                <td>{{ type_de_lieu.id }}</td>
+                <td>{{ type_de_lieu.libelle }}</td>
+                <td>
+                    <a href="{{ path('app_type_de_lieu_show', {'id': type_de_lieu.id}) }}">show</a>
+                    <a href="{{ path('app_type_de_lieu_edit', {'id': type_de_lieu.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_type_de_lieu_new') }}">Create new</a>
+{% endblock %}

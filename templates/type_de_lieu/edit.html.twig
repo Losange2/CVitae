@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit TypeDeLieu{% endblock %}
+
+{% block body %}
+    <h1>Edit TypeDeLieu</h1>
+
+    {{ include('type_de_lieu/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_type_de_lieu_index') }}">back to list</a>
+
+    {{ include('type_de_lieu/_delete_form.html.twig') }}
+{% endblock %}
