@@ -269,4 +269,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function createmdp(UserPasswordHasherInterface $passwordHasher): void
+    {
+        $faker = \Faker\Factory::create();
+        $user = new User();
+        
+        // Générer un mot de passe en clair avec Faker
+        $plaintextPassword = $faker->password();
+        
+        // Hacher le mot de passe
+        $hashedPassword = $passwordHasher->hashPassword(
+            $user,
+            $plaintextPassword
+        );
+        
+        // Définir le mot de passe haché
+        $user->setPassword($hashedPassword);
+        
+        // Persister l'utilisateur
+        // $entityManager->persist($user);
+        // $entityManager->flush();
+    }
+
 }

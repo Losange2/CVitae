@@ -25,11 +25,19 @@
     
 </div>
 <div class="example-wrapper">
-    <h1>Bonjour {{ controller_name }}! ✅</h1>
+    <h1>Bonjour {{ app.user.prenom }} {{ app.user.nom }}</h1>
 
     Ce message amical provient de :
 <ul>
-
+{# {% for cv in cvs %}
+    {{ cv.titre }}
+{% endfor %}
+{% for point in points %}
+    <li>{{ point }}</li>
+{% endfor %} #}
+{% for categorie in categories %}
+    <li>{{ categorie.libelle }}</li>
+{% endfor %}
 
 </ul>
 
