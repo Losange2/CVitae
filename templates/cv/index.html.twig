@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'template.html.twig' %}
 
 {% block title %}Cv index{% endblock %}
 
@@ -10,23 +10,21 @@
             <tr>
                 <th>Id</th>
                 <th>Titre</th>
-                {% if is_granted('ROLE_ADMIN') %}
                 <th>actions</th>
-                {% endif %}
             </tr>
         </thead>
         <tbody>
         {% for cv in cvs %}
+            {% if cv.getLeClient() == app.user %}
             <tr>
                 <td>{{ cv.id }}</td>
                 <td>{{ cv.Titre }}</td>
                 <td>
-                    {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_cv_show', {'id': cv.id}) }}">show</a>
                     <a href="{{ path('app_cv_edit', {'id': cv.id}) }}">edit</a>
-                    {% endif %}
                 </td>
             </tr>
+        {% endif %}
         {% else %}
             <tr>
                 <td colspan="3">no records found</td>

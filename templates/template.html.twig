@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mon site{% endblock %}</title>
+    
+    {% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/index.css') }}">
+    {% endblock %}
+</head>
+<body>
+    <div class="navbar-custom">
+        <a href="">Notre équipe</a>
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <a href="{{ path('app_cv_index') }}">Vos CVs</a>
+        <a href="{{ path('app_logout') }}">Déconnexion</a>
+    {% else %}
+        <a href="">Comment faire un bon cv</a>
+        <a href="{{ path('app_login') }}">Se connecter</a>
+    {% endif %}
+    </div>
+    
+    {% block body %}
+    {% endblock %}
+</body>
+</html>
+
+

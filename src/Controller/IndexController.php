@@ -26,7 +26,7 @@ public function index(CvRepository $cvRepository): Response
     $categories = [];
     foreach ($points as $point) {
         $categories[] = $point->getLaCate();
-    }
+    }   
 
 
     return $this->render('index/index.html.twig', [

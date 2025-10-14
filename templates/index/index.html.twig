@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'template.html.twig' %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('/css/index.css') }}">
@@ -12,34 +12,24 @@
     .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
-<div class="navbar-custom">
-    <a href="">Notre équipe</a>
-{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-    <a href="{{ path('app_cv_index') }}">Vos CVs</a>
-    <a href="{{ path('app_logout') }}">Déconnexion</a>
-{% else %}
-    <a href="">Comment faire un bon cv</a>
-    <a href="{{ path('app_login') }}">Se connecter</a>
-{% endif %}
 
     
 </div>
+
 <div class="example-wrapper">
+{% if is_granted('IS_AUTHENTICATED_FULLY') %}
     <h1>Bonjour {{ app.user.prenom }} {{ app.user.nom }}</h1>
-
-    Ce message amical provient de :
-<ul>
-{# {% for cv in cvs %}
-    {{ cv.titre }}
-{% endfor %}
-{% for point in points %}
+    <h2>Voici la liste de vos CVs :</h2>
+    {% for cv in cvs %}
+        {% if cv.getLeClient() == app.user %}
+            <li>{{ cv.titre }}</li>
+        {% endif %}
+    {% endfor %}
+    {# {% for point in points %}
     <li>{{ point }}</li>
-{% endfor %} #}
-{% for categorie in categories %}
-    <li>{{ categorie.libelle }}</li>
-{% endfor %}
-
-</ul>
+    {% endfor %} # #}
+{% endif %}
+</div>
 
 
 {% endblock %}

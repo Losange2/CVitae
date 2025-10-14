@@ -15,17 +15,8 @@ class CvType extends AbstractType
     {
         $builder
             ->add('Titre')
-            ->add('le_client', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'id',
-            ])
         ;
+
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => Cv::class,
-        ]);
-    }
 }

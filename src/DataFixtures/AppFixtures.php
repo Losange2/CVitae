@@ -31,6 +31,16 @@ class AppFixtures extends Fixture
         $admin->setDateDeNaissance(new \DateTime('-30 years'));
         $admin->setPassword($this->passwordHasher->hashPassword($admin, 'adminpass'));
         $manager->persist($admin);
+        $utilisateur = new \App\Entity\User();
+        $utilisateur->setRoles(['ROLE_USER']);
+        $utilisateur->setEmail('utilisateur@example.com');
+        $utilisateur->setNom('Utilisateur');
+        $utilisateur->setPrenom('Simple');
+        $utilisateur->setTelephone('0987654321');
+        $utilisateur->setAdresse('456 User Ave, User City');
+        $utilisateur->setDateDeNaissance(new \DateTime('-25 years'));
+        $utilisateur->setPassword($this->passwordHasher->hashPassword($utilisateur, 'userpass'));
+        $manager->persist($utilisateur);
         
         // === 2. Créer les utilisateurs ===
         $users = [$admin]; // Tableau pour stocker les users
