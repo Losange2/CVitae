@@ -11,6 +11,7 @@
 </head>
 <body>
     <div class="navbar-custom">
+        <a href="{{ path('app_index') }}">Accueil</a>
         <a href="">Notre équipe</a>
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         <a href="{{ path('app_cv_index') }}">Vos CVs</a>

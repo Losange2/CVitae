@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'template.html.twig' %}
 
 {% block title %}Cv{% endblock %}
 
@@ -8,12 +8,38 @@
     <table class="table">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ cv.id }}</td>
+                <th style="text-align: center;">Titre</th>
             </tr>
             <tr>
-                <th>Titre</th>
-                <td>{{ cv.Titre }}</td>
+                <td style="text-align: center;">{{ cv.Titre }}</td>
+            </tr>
+            <tr>
+                <td>
+                    {% set categories = {} %}
+                    {% for point in cv.getLesPoints() %}
+                        {% set cateId = 'cat_' ~ point.getLaCate().id %}
+                        {% set cateName = point.getLaCate().libelle %}
+                        {% if categories[cateId] is not defined %}
+                            {% set categories = categories|merge({(cateId): {name: cateName, points: []}}) %}
+                        {% endif %}
+                        {% set categories = categories|merge({(cateId): {name: cateName, points: categories[cateId].points|merge([point])}}) %}
+                    {% endfor %}
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+                        {% for cateId, category in categories %}
+                            <div class="category" style="flex: 0 1 auto;">
+                                <details {{ loop.first ? 'open' : '' }} onclick="document.querySelectorAll('details').forEach(d => { if(d !== this) d.removeAttribute('open'); })">
+                                    <summary style="cursor: pointer; font-weight: bold; text-align: center;">{{ category.name }}</summary>
+                                    <ul>
+                                        {% for point in category.points %}
+                                            <li>{{ point.libelle }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </details>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -24,6 +50,11 @@
     
 
 
+    {{ include('cv/_delete_form.html.twig') }}
+
+{% endif %}
+{% if is_granted('ROLE_USER') and app.user == cv.getLeClient() %}
+    <a href="{{ path('app_cv_edit', {'id': cv.id}) }}">edit</a>
     {{ include('cv/_delete_form.html.twig') }}
 {% endif %}
 {% endblock %}

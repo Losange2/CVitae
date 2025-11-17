@@ -1,14 +1,14 @@
 /* Variables de couleurs */
 :root {
-    --primary-color: #2563eb;
-    --primary-dark: #1e40af;
-    --secondary-color: #64748b;
-    --background: #f8fafc;
-    --surface: #ffffff;
-    --text-primary: #1e293b;
-    --text-secondary: #475569;
-    --border-color: #e2e8f0;
-    --success: #22c55e;
+    --primary-color: #18385e;
+    --primary-dark: #0f2540;
+    --secondary-color: #fe6522;
+    --background: #d3d5d5;
+    --surface: #e8e9e9;
+    --text-primary: #282727;
+    --text-secondary: #282727;
+    --border-color: #b8baba;
+    --success: #18385e;
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
@@ -22,14 +22,14 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--background);
     color: var(--text-primary);
     line-height: 1.6;
     min-height: 100vh;
 }
 
 
-/* Navigation personnalisée */
+/* Navigation
 .navbar-custom {
     background: var(--surface);
     padding: 1rem 2rem;
@@ -57,7 +57,7 @@ body {
 
 .navbar-custom a:hover {
     color: var(--primary-color);
-    background: rgba(37, 99, 235, 0.05);
+    background: rgba(24, 56, 94, 0.05);
 }
 
 .navbar-custom a::after {
@@ -91,12 +91,8 @@ body {
 h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--primary-color);
     margin-bottom: 1.5rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 /* Paragraphes */
@@ -116,7 +112,7 @@ ul li {
     padding: 1rem;
     margin-bottom: 0.75rem;
     background: var(--background);
-    border-left: 3px solid var(--primary-color);
+    border-left: 3px solid var(--secondary-color);
     border-radius: 0.5rem;
     transition: all 0.3s ease;
 }
@@ -188,7 +184,7 @@ code a:hover {
 }
 
 .btn-secondary:hover {
-    background: #475569;
+    background: #e5581e;
 }
 
 /* Formulaires */
@@ -206,9 +202,7 @@ form h1 {
     text-align: center;
     margin-bottom: 2rem;
     font-size: 1.75rem;
-    color: var(--text-primary);
-    background: none;
-    -webkit-text-fill-color: var(--text-primary);
+    color: var(--primary-color);
 }
 
 form label {
@@ -240,7 +234,7 @@ form input[type="text"]:focus,
     outline: none;
     border-color: var(--primary-color);
     background: var(--surface);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px rgba(24, 56, 94, 0.1);
 }
 
 /* Alertes */
@@ -331,7 +325,7 @@ form p a:hover {
 }
 
 .table thead {
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    background: var(--secondary-color);
 }
 
 .table thead tr th {
@@ -385,7 +379,7 @@ form p a:hover {
 .table tbody tr td a:hover {
     background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 4px 12px rgba(24, 56, 94, 0.3);
 }
 
 .table tbody tr td a:last-child {
@@ -424,7 +418,7 @@ form p a:hover {
 }
 
 .example-wrapper > a[href*="new"] {
-    background: var(--success);
+    background: var(--primary-color);
 }
 
 .example-wrapper > a[href*="list"],
@@ -433,22 +427,22 @@ form p a:hover {
 }
 
 .example-wrapper > a[href*="new"]:hover {
-    background: #16a34a;
+    background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+    box-shadow: 0 8px 20px rgba(24, 56, 94, 0.3);
 }
 
 .example-wrapper > a[href*="list"]:hover,
 .example-wrapper > a[href*="index"]:hover {
-    background: #475569;
+    background: #e5581e;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(100, 116, 139, 0.3);
+    box-shadow: 0 8px 20px rgba(254, 101, 34, 0.3);
 }
 
 .example-wrapper > a[href*="edit"]:hover {
     background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 8px 20px rgba(24, 56, 94, 0.3);
 }
 
 /* Conteneur de table */

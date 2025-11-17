@@ -25,10 +25,14 @@
             <li>{{ cv.titre }}</li>
         {% endif %}
     {% endfor %}
-    {# {% for point in points %}
-    <li>{{ point }}</li>
-    {% endfor %} # #}
+<a href="{{ path('app_creer') }}">Créer un nouveau CV</a>
 {% endif %}
+{% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+    <h1>Bienvenue sur CVitae</h1>
+    <p>CVitae est une application web qui vous permet de créer et gérer vos CV en ligne facilement.</p>
+    <p>Vous voulez creer un CV ? <a href="{{ path('app_register') }}">Cliquez ici</a>.</p>
+{% endif %}
+
 </div>
 
 

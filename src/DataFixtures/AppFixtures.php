@@ -84,14 +84,22 @@ class AppFixtures extends Fixture
         }
         
         // === 5. Créer les catégories ===
-        $categories = [];
-        for ($i = 0; $i < 5; $i++) {
-            $categorie = new \App\Entity\Categorie();
-            $categorie->setLibelle($faker->word());
-            $manager->persist($categorie);
-            $categories[] = $categorie;
-        }
-        
+        $categorie1 = new \App\Entity\Categorie();
+        $categorie1->setLibelle('Acceuil');
+        $manager->persist($categorie1);
+        $categorie2 = new \App\Entity\Categorie();
+        $categorie2->setLibelle('Expériences');
+        $manager->persist($categorie2);
+        $categorie3 = new \App\Entity\Categorie();
+        $categorie3->setLibelle('Formations');
+        $manager->persist($categorie3);
+        $categorie4 = new \App\Entity\Categorie();
+        $categorie4->setLibelle('Compétences');
+        $manager->persist($categorie4);
+        $categorie5 = new \App\Entity\Categorie();
+        $categorie5->setLibelle('Centre d\'intérêt');
+        $manager->persist($categorie5);
+        $categories = [$categorie1, $categorie2, $categorie3, $categorie4, $categorie5];
         // === 6. Créer les CV ===
         $cvs = [];
         for ($i = 0; $i < 5; $i++) {
@@ -115,7 +123,7 @@ class AppFixtures extends Fixture
             $manager->persist($lieu);
         }
         
-        // === 8. Créer les points ===
+        // === 8. Créer les points 
         for ($i = 0; $i < 5; $i++) {
             $point = new \App\Entity\Point();
             $point->setLibelle($faker->word());

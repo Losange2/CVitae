@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 use App\Repository\CvRepository;
+use App\Repository\PointRepository;
+use App\Repository\CategorieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -28,7 +30,7 @@ final class CreerController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($cv);
             $entityManager->flush();
-            return $this->redirectToRoute('app_cv_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_creer_remplissage', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('creer/index.html.twig', [
@@ -36,5 +38,30 @@ final class CreerController extends AbstractController
             'cv' => $cv,
             'form' => $form,
         ]);
+    }
+
+    #[Route('/creer/remplissage', name: 'app_creer_remplissage')]
+    public function remplissage(PointRepository $pointRepository, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $point = $pointRepository->findAll();
+        if (!$point) {
+            throw $this->createNotFoundException(
+          'No point found'
+            );
+        }
+        $point = new \App\Entity\Point();
+        $form = $this->createForm(\App\Form\PointType::class, $point);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($point);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_creer_remplissage', [], Response::HTTP_SEE_OTHER);
+        }
+        return $this->render('creer/remplissage.html.twig', [
+            'controller_name' => 'CreerController',
+            'point' => $point,
+            'form' => $form,
+        ]);
+
     }
 }
