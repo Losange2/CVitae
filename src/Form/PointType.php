@@ -28,14 +28,16 @@ class PointType extends AbstractType
             ->add('le_cv', EntityType::class, [
                 'class' => Cv::class,
                 'choice_label' => 'Titre',
-                'query_builder' => fn(CvRepository $r) => $r->createQueryBuilder('c')->orderBy('c.id', 'DESC'),
-                'data' => $this->cvRepository->findOneBy([], ['id' => 'DESC']),
                 'label' => false,
                 'attr' => ['style' => 'display:none;'],
+                'disabled' => true,
             ])
             ->add('la_cate', EntityType::class, [
             'class' => Categorie::class,
             'choice_label' => 'libelle',
+            'attr' => ['style' => 'display:none;'],
+            'label' => false,
+            'disabled' => true,
             ])
             ->add('libelle', null, [
             ]);
