@@ -13,11 +13,11 @@
     <div class="navbar-custom">
         <a href="{{ path('app_index') }}">Accueil</a>
         <a href="">Notre équipe</a>
+        <a href="{{ path('app_recherche') }}">Recherchez des CVs</a>    
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         <a href="{{ path('app_cv_index') }}">Vos CVs</a>
         <a href="{{ path('app_logout') }}">Déconnexion</a>
     {% else %}
-        <a href="">Comment faire un bon cv</a>
         <a href="{{ path('app_login') }}">Se connecter</a>
     {% endif %}
     </div>

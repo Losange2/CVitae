@@ -1,0 +1,28 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Recherche de CV{% endblock %}
+
+{% block body %}
+<div class="example-wrapper">
+    <h1>Rechercher un CV</h1>
+    
+    <form method="get" action="{{ path('app_recherche') }}">
+        <input type="text" name="q" value="{{ query }}" placeholder="Rechercher par titre, nom ou prénom..." class="form-control" />
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+
+    <h2>Résultats ({{ cvs|length }} CV trouvé(s))</h2>
+    
+    {% if cvs is empty %}
+        <p>Aucun CV trouvé.</p>
+    {% else %}
+        {% for cv in cvs %}
+            <div style="padding: 1rem; margin: 1rem 0; background: var(--background); border-radius: 0.5rem;">
+                <h3>{{ cv.titre }}</h3>
+                <p>Créé par : {{ cv.leClient.prenom }} {{ cv.leClient.nom }}</p>
+                <a href="{{ path('app_cv_show', {'id': cv.id}) }}" class="btn">Voir le CV</a>
+            </div>  
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

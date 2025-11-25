@@ -32,12 +32,7 @@ class PointType extends AbstractType
                 'attr' => ['style' => 'display:none;'],
                 'disabled' => true,
             ])
-            ->add('la_cate', EntityType::class, [
-            'class' => Categorie::class,
-            'choice_label' => 'libelle',
-            'attr' => ['style' => 'display:none;'],
-            'label' => false,
-            'disabled' => true,
+            ->add('la_cate', null, [
             ])
             ->add('libelle', null, [
             ]);

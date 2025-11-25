@@ -16,6 +16,23 @@ class CvRepository extends ServiceEntityRepository
         parent::__construct($registry, Cv::class);
     }
 
+    /**
+     * @return Cv[] Returns an array of Cv objects
+     */
+    public function searchCvs(string $query): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.le_client', 'u')
+            ->where('c.Titre LIKE :query')
+            ->orWhere('u.nom LIKE :query')
+            ->orWhere('u.prenom LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('c.id', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     //    /**
     //     * @return Cv[] Returns an array of Cv objects
     //     */
