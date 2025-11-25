@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
+use Knp\Snappy\Pdf;
 
 #[Route('/cv')]
 final class CvController extends AbstractController
@@ -53,6 +55,18 @@ final class CvController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/pdf', name: 'app_cv_pdf', methods: ['GET'])]
+    public function exportPdf(Cv $cv, Pdf $snappyPdf): Response
+    {
+        $html = $this->renderView('cv/pdf.html.twig', [
+            'cv' => $cv,
+        ]);
+
+        return new PdfResponse(
+            $snappyPdf->getOutputFromHtml($html),
+            'cv_' . $cv->getTitre() . '.pdf'
+        );
+    }
 
     #[Route('/{id}/edit', name: 'app_cv_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Cv $cv, EntityManagerInterface $entityManager): Response
