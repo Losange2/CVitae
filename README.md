@@ -32,6 +32,7 @@ Pour installer symphony dans docker :
 - nano docker-compose.yml
 
 Mettez cela dans le nano :
+```
 version: "3.8"
  
 services:
@@ -59,10 +60,10 @@ services:
     image: mysql:8.0
     container_name: symfony-db
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root // a changer une fois votre db creer
       MYSQL_DATABASE: symfony
       MYSQL_USER: symfony
       MYSQL_PASSWORD: symfony
     ports:
       - "3306:3306"
- 
+ ```
