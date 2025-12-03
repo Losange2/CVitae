@@ -92,8 +92,8 @@ Si cela vous retourne ça cela marche (le jour et l'heure changeront en fonction
 total 8
 -rw-r--r-- 1 operateur docker 623  1 déc.  11:04 docker-compose.yml
 -rw-r--r-- 1 operateur docker 428  1 déc.  11:13 nginx.conf
-- sudo docker exec -it symfony-php bash
-- apt update && apt install -y git unzip curl
+- git clone https://github.com/Losange2/CVitae my_project
+- apt-get update && apt-get install -y \ git unzip zip
 - curl -sS https://getcomposer.org/installer | php
 - mv composer.phar /usr/local/bin/composer
-- composer create-project symfony/website-skeleton my_project
+- 
