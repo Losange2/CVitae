@@ -1,20 +1,23 @@
 # 📄 CVitae
-# Sur une première VM
+# ***Sur une première VM***
 # 1. Installer MariaDB
+```
 sudo apt update
 sudo apt install mariadb-server -y
+```
 
 # 2. Démarrer le service MariaDB
+```
 sudo systemctl start mariadb
 sudo systemctl enable mariadb
+```
 
-# 3. Sécuriser l'installation (optionnel mais recommandé)
-sudo mysql_secure_installation
-
-# 4. Se connecter à MariaDB en tant que root
+# 3. Se connecter à MariaDB en tant que root
+```
 sudo mariadb
-
-# 5. Dans le shell MariaDB, créer la base et l'utilisateur
+```
+# 4. Dans le shell MariaDB, créer la base et l'utilisateur
+```
 CREATE DATABASE CVitae;
 
 -- Remplacer 'monuser' et 'monpassword' par ton choix
@@ -25,6 +28,7 @@ GRANT ALL PRIVILEGES ON CVitae.* TO 'monuser'@'*';
 FLUSH PRIVILEGES;
 
 EXIT;
+```
 # ***Sur une deuxième VM***
 ## 🐳 Installation de Docker
 
