@@ -1,36 +1,97 @@
-# CVitae
+# 📄 CVitae
+# Sur une première VM
+# 1. Installer MariaDB
+sudo apt update
+sudo apt install mariadb-server -y
 
-Pour installer docker :
- 
-- sudo apt update && sudo apt upgrade -y
-- sudo apt install ca-certificates curl gnupg lsb-release -y
-- sudo install -m 0755 -d /etc/apt/keyrings
-- curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-- sudo chmod a+r /etc/apt/keyrings/docker.gpg
-- echo \
+# 2. Démarrer le service MariaDB
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+
+# 3. Sécuriser l'installation (optionnel mais recommandé)
+sudo mysql_secure_installation
+
+# 4. Se connecter à MariaDB en tant que root
+sudo mariadb
+
+# 5. Dans le shell MariaDB, créer la base et l'utilisateur
+CREATE DATABASE CVitae;
+
+-- Remplacer 'monuser' et 'monpassword' par ton choix
+CREATE USER 'monuser'@'*' IDENTIFIED BY 'monpassword';
+
+GRANT ALL PRIVILEGES ON CVitae.* TO 'monuser'@'*';
+
+FLUSH PRIVILEGES;
+
+EXIT;
+# ***Sur une deuxième VM***
+## 🐳 Installation de Docker
+
+### Mise à jour du système et installation des dépendances
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install ca-certificates curl gnupg lsb-release -y
+```
+
+### Configuration des clés GPG
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+```
+
+### Ajout du dépôt Docker
+```bash
+echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
 https://download.docker.com/linux/debian \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-Pour vérifier que ça marche bien :
-- cat /etc/apt/sources.list.d/docker.list
-- sudo apt update
-- sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-- sudo systemctl start docker
-- sudo systemctl enable docker
-- sudo docker run hello-world
-- sudo usermod -aG docker $USER
-- newgrp docker
-- docker ps
+```
 
-Cela doit montrer si cela a marché : 
+### ✅ Vérification que ça marche bien
+```bash
+cat /etc/apt/sources.list.d/docker.list
+```
+
+### Installation de Docker
+```bash
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+### Test de l'installation
+```bash
+sudo docker run hello-world
+sudo usermod -aG docker $USER
+newgrp docker
+docker ps
+```
+
+**Cela doit montrer si cela a marché :**
+```
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
 
-Pour installer symphony dedans :
- 
-- mkdir ~/symfony-server
-- cd ~/symfony-server
-- nano docker-compose.yml
-- 
+---
+
+## 🎵 Installation de Symfony
+
+### Création du dossier de travail
+```bash
+mkdir ~/symfony-server
+cd ~/symfony-server
+```
+
+### Configuration Docker Compose
+```bash
+nano docker-compose.yml
+```
+
+**Contenu du fichier `docker-compose.yml` :**
+```yaml
 version: "3.8"
  
 services:
@@ -64,9 +125,15 @@ services:
       MYSQL_PASSWORD: symfony
     ports:
       - "3306:3306"
- 
-- nano nginx.conf
--
+```
+
+### Configuration Nginx
+```bash
+nano nginx.conf
+```
+
+**Contenu du fichier `nginx.conf` :**
+```nginx
 server {
     listen 80;
     server_name localhost;
@@ -90,9 +157,15 @@ server {
         deny all;
     }
 }
+```
 
-- nano Dockerfile
--
+### Configuration du Dockerfile
+```bash
+nano Dockerfile
+```
+
+**Contenu du fichier `Dockerfile` :**
+```dockerfile
 FROM php:8.3-cli
 
 # Dépendances système
@@ -104,44 +177,93 @@ RUN apt update && apt install -y \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
+```
 
-- ls -l
-Cela renvoie (la date va dépendre de quand vous l'avez creez): 
+### Vérification des fichiers créés
+```bash
+ls -l
+```
+
+**Cela renvoie (la date va dépendre de quand vous l'avez créé) :**
+```
 operateur@debian:~/symfony-server$ ls -l
 total 16
 -rw-r--r-- 1 operateur docker  477 15 déc.  10:11 docker-compose.yml
 -rw-r--r-- 1 operateur docker  247 15 déc.  10:32 Dockerfile
 -rw-r--r-- 1 operateur docker  502 15 déc.  10:13 nginx.conf
+```
 
-- docker compose up -d
- 
+### Démarrage des conteneurs
+```bash
+docker compose up -d
+```
 
-- sudo docker exec -it symfony-php bash
-- apt update && apt install -y git unzip curl
-- curl -sS https://getcomposer.org/installer | php
-- mv composer.phar /usr/local/bin/composer
-- git clone https://github.com/Losange2/CVitae
-- docker run -it --rm \
+---
+
+## ⚙️ Configuration du projet CVitae
+
+### Installation des dépendances dans le conteneur PHP
+```bash
+sudo docker exec -it symfony-php bash
+apt update && apt install -y git unzip curl
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/local/bin/composer
+git clone https://github.com/Losange2/CVitae
+```
+
+### Configuration de l'environnement
+```bash
+docker run -it --rm \
   -v $(pwd)/CVitae:/var/www/html \
   cvitae bash
-- cd CVitae
-- apt update && apt install -y \
+cd CVitae
+apt update && apt install -y \
     git unzip zip libzip-dev \
     && docker-php-ext-install zip
-- composer install --no-interaction --ignore-platform-reqs
-- cat > .env.local << 'EOF'
+composer install --no-interaction --ignore-platform-reqs
+```
+
+### Création du fichier de configuration `.env.local`
+```bash
+cat > .env.local << 'EOF'
 APP_ENV=dev
 APP_DEBUG=1
-DATABASE_URL="mysql://testdocker:testdocker@192.168.56.222:3306/cvitae?serverVersion=8.0"
+DATABASE_URL="mysql://monuser:monmotdepasse@ipdelavmserveur:3306/CVitae?serverVersion=10.6"
+
 EOF
-- php bin/console cache:clear
-- apt-get update
+```
+
+### Nettoyage du cache
+```bash
+php bin/console cache:clear
+```
+
+### Installation de MySQL et PDO
+```bash
+apt-get update
 apt-get install -y default-mysql-client
 docker-php-ext-install pdo pdo_mysql
-- exit
-docker compose restart php
-- docker compose exec php bash
-php -m | grep pdo
+exit
+```
 
-et vous devriez voir :
+### Redémarrage et vérification
+```bash
+docker compose restart php
+docker compose exec php bash
+php -m | grep pdo
+```
+
+**Vous devriez voir :**
+```
 pdo_mysql
+```
+
+### Envoie des données test vers la base de données
+
+```
+php bin/console doctrine:schema:update --force
+
+php bin/console doctrine:fixtures:load --no-interaction
+
+```
+**Vous pouvez vous connectez a l'ip de votre VM et cela devrait lancer l'application (si des problèmes vous arrive faites moi un issues**
