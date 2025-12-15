@@ -1,5 +1,5 @@
 # 📄 CVitae
-# ***Sur une première VM *** (recommandé mais le faire sur une seule VM est possible)
+# ***Sur une première VM  (recommandé mais le faire sur une seule VM est possible)***
 # 1. Installer MariaDB
 ```
 sudo apt update
