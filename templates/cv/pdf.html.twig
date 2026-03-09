@@ -2,69 +2,307 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <h1> {{ cv.leClient.prenom }} {{ cv.leClient.nom }} </h1>
-    <p>{{ cv.leClient.email }}</p>
-    <p>{{ cv.leClient.telephone }}</p>
-    <p>{{ cv.leClient.adresse }}</p>
-    <p>{{ cv.leClient.getDateDeNaissance()|date('d/m/Y') }}</p>
     <title>{{ cv.Titre }}</title>
     <style>
+        * { box-sizing: border-box; }
+        
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            color: #282727;
+            /* SOLUTION: Use a gradient to create the two-column background effect.
+               This ensures both the blue sidebar and white content area extend 
+               to the full height of the page regardless of content length. */
+            background-color: #ffffff; /* Fallback */
+            background: -webkit-linear-gradient(left, #2c3e50 0%, #2c3e50 32%, #ffffff 32%, #ffffff 100%);
+            background: linear-gradient(to right, #2c3e50 0%, #2c3e50 32%, #ffffff 32%, #ffffff 100%);
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
         }
-        h1 {
-            color: #18385e;
-            text-align: center;
-            margin-bottom: 30px;
+
+        /* The MAIN CONTENT area - White background, positioned on the right */
+        .right-column {
+            /* background-color: #ffffff;  Removed to let body gradient show, or keep for safety */
+            width: 68%;
+            float: right;
+            padding: 40px;
+            /* removed fixed heights to let content flow naturally over the gradient background */
         }
-        .category {
-            margin-bottom: 25px;
+
+        /* The SIDEBAR CONTENT - Transparent background (shows body blue), floats left */
+        .left-column {
+            width: 32%;
+            float: left;
+            padding: 30px;
+            color: #ffffff;
+        }
+
+        /* Sidebar Styling Elements */
+        .left-column h2 {
+            text-transform: uppercase;
+            font-size: 18px;
+            font-weight: normal;
+            margin-bottom: 15px;
+            color: #fff;
+            margin-top: 30px;
+            border-bottom: 1px solid #48596a;
+            padding-bottom: 5px;
+        }
+        .contact-info p {
+            margin: 12px 0;
+            font-size: 13px;
+            word-wrap: break-word;
+            line-height: 1.4;
+            color: #ecf0f1;
+        }
+        .contact-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 3px;
+            color: #bdc3c7;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        
+        .sidebar-item {
+            margin-bottom: 15px;
+        }
+        .sidebar-item-text {
+            color: #ecf0f1;
+            font-size: 13px;
+            display: block;
+        }
+
+        /* Main Content Styling */
+        .header-name {
+            font-size: 38px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: 300;
+            line-height: 1.2;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 50px;
+            font-weight: normal;
+        }
+        
+        .section {
+            margin-bottom: 35px;
             page-break-inside: avoid;
         }
-        .category h2 {
-            background: #fe6522;
-            color: white;
-            padding: 10px;
-            margin: 0;
-            font-size: 18px;
+
+        .section-title {
+            font-size: 22px;
+            color: #7f8c8d;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
         }
-        .category ul {
-            list-style: none;
-            padding: 0;
-            margin: 10px 0;
+
+        .item {
+            margin-bottom: 15px;
+            position: relative;
         }
-        .category li {
-            padding: 8px 15px;
-            margin: 5px 0;
-            background: #f5f5f5;
-            border-left: 3px solid #18385e;
+        
+        .item-text {
+            font-weight: bold;
+            font-size: 15px;
+            color: #2c3e50;
+            display: block;
+        }
+        
+        .item-date {
+            float: right;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .item-description {
+            font-size: 14px;
+            color: #555;
+            margin-top: 2px;
+            display: block;
+        }
+        
+        .decor-lines { 
+            margin-bottom: 40px; 
+            opacity: 0.5; 
+        }
+        .decor-lines div {
+            height: 2px;
+            background-color: #546e7a;
+            margin-bottom: 6px;
+        }
+        
+        /* Clearfix */
+        .clearfix:after {
+            content: "";
+            display: table;
+            clear: both;
         }
     </style>
+    <script>
+        function fitContentToPage() {
+            // A4 height at 96dpi is ~1123px. We use 1122px to be safe.
+            var maxHeight = 1122;
+            var zoom = 1.0;
+            var minZoom = 0.6; 
+            
+            function getHeight() {
+                var body = document.body;
+                var html = document.documentElement;
+                 return Math.max(
+                    body.scrollHeight, body.offsetHeight, 
+                    html.clientHeight, html.scrollHeight, html.offsetHeight
+                );
+            }
+
+            // Optimization: Use smaller steps (0.01) to get the largest possible font size that fits
+            var iterations = 0;
+            while (getHeight() > maxHeight && zoom > minZoom && iterations < 100) {
+                zoom -= 0.003;
+                document.body.style.zoom = zoom;
+                iterations++;
+            }
+        }
+    </script>
 </head>
-<body>
-    <h1>{{ cv.Titre }}</h1>
-    
+<body onload="fitContentToPage()">
+    {# Prepare Data #}
     {% set categories = {} %}
     {% for point in cv.getLesPoints() %}
-        {% set cateId = 'cat_' ~ point.getLaCate().id %}
-        {% set cateName = point.getLaCate().libelle %}
-        {% if categories[cateId] is not defined %}
-            {% set categories = categories|merge({(cateId): {name: cateName, points: []}}) %}
+        {% if point.getLaCate() %}
+            {% set catName = point.getLaCate().libelle %}
+            {% if categories[catName] is not defined %}
+                {% set categories = categories|merge({(catName): [point]}) %}
+            {% else %}
+                {% set categories = categories|merge({(catName): categories[catName]|merge([point])}) %}
+            {% endif %}
         {% endif %}
-        {% set categories = categories|merge({(cateId): {name: cateName, points: categories[cateId].points|merge([point])}}) %}
     {% endfor %}
-    
-    {% for cateId, category in categories %}
-        <div class="category">
-            <h2>{{ category.name }}</h2>
-            <ul>
-                {% for point in category.points %}
-                    <li>{{ point.libelle }}</li>
+
+    <!-- Wrap everything in a container if needed, but body bg handles the blue -->
+    <div class="clearfix">
+            
+        <!-- LEFT COLUMN (SIDEBAR) -->
+        <div class="left-column">
+            <!-- SVG Graphic Approximation with Divs -->
+            <div class="decor-lines">
+                <div style="width: 80%"></div>
+                <div style="width: 75%"></div>
+                <div style="width: 70%"></div>
+                <div style="width: 65%"></div>
+                <div style="width: 60%"></div>
+                <div style="width: 55%"></div>
+                <div style="width: 50%"></div>
+                <div style="width: 45%"></div>
+            </div>
+
+            {% if cv.photoFilename %}
+                <div style="margin-bottom: 30px; text-align: center;">
+                     <div style="
+                        width: 150px; 
+                        height: 150px; 
+                        border-radius: 50%; 
+                        background-image: url('file:///{{ (project_dir ~ '/public/uploads/photos/' ~ cv.photoFilename)|replace({'\\': '/'}) }}'); 
+                        background-size: cover;
+                        background-repeat: no-repeat;
+                        background-position: center; 
+                        border: 3px solid #ecf0f1; 
+                        display: inline-block;">
+                     </div>
+                </div>
+            {% endif %}
+
+            <div class="contact-info">
+                <h2>Contact</h2>
+                
+                <p>
+                    <span class="contact-label">Téléphone :</span>
+                    {{ cv.leClient.telephone|default('Non renseigné') }}
+                </p>
+                <p>
+                    <span class="contact-label">Mail :</span>
+                    {{ cv.leClient.email }}
+                </p>
+                <p>
+                    <span class="contact-label">Adresse :</span>
+                    {{ cv.leClient.adresse|default('Non renseignée') }}
+                </p>
+            </div>
+
+            {# Left Sidebar Categories #}
+            {# Using keywords to filter #}
+            {% set left_keywords = ['Compétence', 'Langue', 'Outil', 'Logiciel', 'Informatique'] %}
+            
+            {% for catName, points in categories %}
+                {% set is_left = false %}
+                {% for keyword in left_keywords %}
+                    {# Check if keyword is in catName #}
+                    {% if keyword in catName %}
+                        {% set is_left = true %}
+                    {% endif %}
                 {% endfor %}
-            </ul>
+
+                {% if is_left %}
+                    <div class="section">
+                        <h2>{{ catName }}</h2>
+                        {% for point in points %}
+                            <div class="sidebar-item">
+                                <span class="sidebar-item-text">{{ point.libelle }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
         </div>
-    {% endfor %}
+
+        <!-- RIGHT COLUMN (MAIN CONTENT) -->
+        <div class="right-column">
+            <div class="header-name">
+                {{ cv.leClient.prenom }} {{ cv.leClient.nom }}
+            </div>
+            <div class="header-title">
+                {{ cv.Titre }}
+            </div>
+
+            {# Right Content Categories #}
+            {% for catName, points in categories %}
+                {% set is_left = false %}
+                {% for keyword in left_keywords %}
+                    {% if keyword in catName %}
+                        {% set is_left = true %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if not is_left %}
+                    <div class="section">
+                        <div class="section-title">{{ catName }}</div>
+                        {% for point in points %}
+                            <div class="item">
+                                <span class="item-date">
+                                    {# Parsing Date if present in libelle or just placeholder #}
+                                    {% if point.libelle matches '/\\d{4}/' %}
+                                        {# Extract date roughly? For now just visual #}
+                                    {% endif %}
+                                </span>
+                                <span class="item-text">{{ point.libelle }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+    </div> 
 </body>
 </html>

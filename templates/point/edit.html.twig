@@ -1,16 +1,67 @@
 {% extends 'template.html.twig' %}
 
-{% block title %}Edit Point{% endblock %}
+{% block title %}Modifier l'information - CVitae{% endblock %}
 
 {% block body %}
-    <h1>Edit Point</h1>
+<div class="flex items-center justify-center min-h-[80vh] py-10">
+    <div class="w-full max-w-xl rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark text-center">
+            <h3 class="font-semibold text-xl text-black dark:text-white">
+                Modifier l'information
+            </h3>
+            {% if point.leCv %}
+                <p class="text-sm text-gray-500 mt-1">CV : {{ point.leCv.titre }}</p>
+            {% endif %}
+        </div>
+        
+        <div class="p-6.5">
+            {{ form_start(form) }}
+                
+                <div class="hidden">
+                    {{ form_widget(form.le_cv) }}
+                </div>
 
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <button class="btn">Update</button>
-    {{ form_end(form) }}
+                <div class="mb-4">
+                    <label class="mb-2.5 block font-medium number text-black dark:text-white text-center">
+                        Catégorie
+                    </label>
+                    <div class="relative z-20 bg-transparent dark:bg-form-input">
+                        {{ form_widget(form.la_cate, {'attr': {'class': 'relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-center'}}) }}
+                    </div>
+                    {{ form_errors(form.la_cate) }}
+                </div>
 
-    <a href="{{ path('app_point_index') }}">back to list</a>
+                <div class="mb-6">
+                    <label class="mb-2.5 block font-medium text-black dark:text-white text-center">
+                        Libellé ou Description
+                    </label>
+                    {{ form_widget(form.libelle, {'attr': {'class': 'w-full rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-center'}}) }}
+                    {{ form_errors(form.libelle) }}
+                </div>
 
-    {{ include('point/_delete_form.html.twig') }}
+                <div class="flex flex-col gap-4">
+                    <button class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 text-white" type="submit">
+                        Mettre à jour
+                    </button>
+                    
+                    {% if point.leCv %}
+                        <a href="{{ path('app_cv_show', {'id': point.leCv.id}) }}" class="flex w-full justify-center rounded border border-stroke bg-gray p-3 font-medium text-black hover:shadow-1 dark:border-strokedark dark:bg-meta-4 dark:text-white dark:hover:shadow-none transition">
+                            Annuler
+                        </a>
+                    {% else %}
+                         <a href="{{ path('app_point_index') }}" class="flex w-full justify-center rounded border border-stroke bg-gray p-3 font-medium text-black hover:shadow-1 dark:border-strokedark dark:bg-meta-4 dark:text-white dark:hover:shadow-none transition">
+                            Retour à la liste
+                        </a>
+                    {% endif %}
+                </div>
+            {{ form_end(form) }}
+
+            {# Danger Zone for Deletion #}
+            <div class="mt-8 border-t border-stroke pt-6 dark:border-strokedark text-center">
+                 <p class="mb-3 text-sm text-gray-500">Zone de danger</p>
+                 {{ include('point/_delete_form.html.twig', {'button_class': 'flex w-full justify-center rounded bg-meta-1 p-3 font-medium text-white hover:bg-opacity-90 transition', 'button_label': 'Supprimer cette information' }) }}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

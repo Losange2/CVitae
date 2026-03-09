@@ -1,17 +1,33 @@
 {% extends 'template.html.twig' %}
 
-{% block title %}Hello CreerController!{% endblock %}
+{% block title %}Nouveau CV{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="flex items-center justify-center min-h-[80vh] py-10">
+        <div class="w-full max-w-xl rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+            <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark text-center">
+                <h3 class="font-semibold text-xl text-black dark:text-white">
+                    Créer un CV
+                </h3>
+            </div>
+            
+            <div class="p-6.5">
+                {{ form_start(form) }}
+                    <div class="mb-6">
+                        <label class="mb-2.5 block font-medium text-black dark:text-white text-center">
+                            Titre du CV <span class="text-meta-1">*</span>
+                        </label>
+                        {{ form_widget(form.Titre, {'attr': {'class': 'w-full rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-center', 'placeholder': 'Ex: CV Développeur Web'}}) }}
+                        {{ form_errors(form.Titre) }}
+                    </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    {{ include('cv/new.html.twig') }}
-    
-</div>
+                    <div class="flex flex-col gap-4">
+                        <button class="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 text-white" type="submit">
+                            Commencer
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
 {% endblock %}

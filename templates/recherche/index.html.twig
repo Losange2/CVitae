@@ -3,26 +3,30 @@
 {% block title %}Recherche de CV{% endblock %}
 
 {% block body %}
-<div class="example-wrapper">
-    <h1>Rechercher un CV</h1>
-    
-    <form method="get" action="{{ path('app_recherche') }}">
-        <input type="text" name="q" value="{{ query }}" placeholder="Rechercher par titre, nom ou prénom..." class="form-control" />
-        <button type="submit" class="btn btn-primary">Rechercher</button>
-    </form>
+<div class="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1 max-w-screen-xl mx-auto">
+    <div class="max-w-full overflow-x-auto text-center">
+        <h2 class="text-2xl font-bold mb-6 text-black dark:text-white">Rechercher un CV</h2>
+        
+        <form method="get" action="{{ path('app_recherche') }}" class="mb-4 flex flex-col sm:flex-row gap-4 justify-center">
+            <input type="text" name="q" value="{{ query }}" placeholder="Rechercher par titre, nom ou prénom..." class="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-center font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-black dark:text-white sm:max-w-md" />
+            <button type="submit" class="inline-flex items-center justify-center bg-primary py-3 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10 rounded-lg">Rechercher</button>
+        </form>
 
-    <h2>Résultats ({{ cvs|length }} CV trouvé(s))</h2>
-    
-    {% if cvs is empty %}
-        <p>Aucun CV trouvé.</p>
-    {% else %}
-        {% for cv in cvs %}
-            <div style="padding: 1rem; margin: 1rem 0; background: var(--background); border-radius: 0.5rem;">
-                <h3>{{ cv.titre }}</h3>
-                <p>Créé par : {{ cv.leClient.prenom }} {{ cv.leClient.nom }}</p>
-                <a href="{{ path('app_cv_show', {'id': cv.id}) }}" class="btn">Voir le CV</a>
-            </div>  
-        {% endfor %}
-    {% endif %}
+        <h3 class="text-xl font-bold mb-4 text-black dark:text-white">Résultats ({{ cvs|length }} CV trouvé(s))</h3>
+        
+        {% if cvs is empty %}
+            <p class="text-black dark:text-white">Aucun CV trouvé.</p>
+        {% else %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for cv in cvs %}
+                <div class="rounded-sm border border-stroke bg-gray px-5 pt-6 pb-2.5 shadow-sm dark:border-strokedark dark:bg-meta-4 sm:px-7.5 xl:pb-1 flex flex-col items-center">
+                    <h4 class="text-lg font-bold mb-2 text-black dark:text-white text-center">{{ cv.titre }}</h4>
+                    <p class="mb-4 text-sm text-black dark:text-white text-center">Créé par : {{ cv.leClient.prenom }} {{ cv.leClient.nom }}</p>
+                    <a href="{{ path('app_cv_show', {'id': cv.id}) }}" class="inline-flex items-center justify-center rounded-md bg-meta-3 py-2 px-6 text-center font-medium text-black hover:bg-opacity-90 lg:px-6 xl:px-6 mb-4">Voir le CV</a>
+                </div>  
+            {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

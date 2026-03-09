@@ -76,10 +76,8 @@ final class PointController extends AbstractController
     #[Route('/{id}/edit', name: 'app_point_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Point $point, EntityManagerInterface $entityManager): Response
     {
-        // Créer un formulaire simple avec uniquement le champ libelle
-        $form = $this->createFormBuilder($point)
-            ->add('libelle')
-            ->getForm();
+        // Utiliser PointType pour avoir tous les champs (catégorie, libellé, etc.)
+        $form = $this->createForm(PointType::class, $point);
         
         $form->handleRequest($request);
 

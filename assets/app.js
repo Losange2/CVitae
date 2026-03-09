@@ -1,4 +1,9 @@
 import './bootstrap.js';
+import Alpine from 'alpinejs';
+
+window.Alpine = Alpine;
+
+Alpine.start();
 /*
  * Welcome to your app's main JavaScript file!
  *

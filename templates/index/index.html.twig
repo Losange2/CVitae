@@ -1,38 +1,36 @@
 {% extends 'template.html.twig' %}
-{% block stylesheets %}
-    {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('/css/index.css') }}">
-{% endblock %}
-{% block title %}Hello IndexController!{% endblock %}
-{% block header %}
+{% block title %}Accueil - CVitae{% endblock %}
 
-{% endblock %}
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        <div class="max-w-full overflow-x-auto py-6 text-center">
+            
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <h1 class="text-2xl font-bold mb-4 text-black dark:text-white">Bonjour {{ app.user.prenom }} {{ app.user.nom }}</h1>
+                <h2 class="text-xl mb-6">Voici la liste de vos CVs :</h2>
+                
+                <ul class="flex flex-col gap-3 mb-6 items-center">
+                {% for cv in cvs %}
+                    {% if cv.getLeClient() == app.user %}
+                        <li class="bg-gray-100 dark:bg-meta-4 p-3 rounded-md w-full max-w-md">{{ cv.titre }}</li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
 
-    
-</div>
+                <a href="{{ path('app_creer') }}" class="inline-flex items-center justify-center rounded-md bg-primary py-3 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10">Créer un nouveau CV</a>
+            {% endif %}
 
-<div class="example-wrapper">
-{% if is_granted('IS_AUTHENTICATED_FULLY') %}
-    <h1>Bonjour {{ app.user.prenom }} {{ app.user.nom }}</h1>
-    <h2>Voici la liste de vos CVs :</h2>
-    {% for cv in cvs %}
-        {% if cv.getLeClient() == app.user %}
-            <li>{{ cv.titre }}</li>
-        {% endif %}
-    {% endfor %}
-<a href="{{ path('app_creer') }}">Créer un nouveau CV</a>
-{% endif %}
-{% if not is_granted('IS_AUTHENTICATED_FULLY') %}
-    <h1>Bienvenue sur CVitae</h1>
-    <p>CVitae est une application web qui vous permet de créer et gérer vos CV en ligne facilement.</p>
-    <p>Vous voulez creer un CV ? <a href="{{ path('app_register') }}">Cliquez ici</a>.</p>
-{% endif %}
+            {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
+                <div class="flex justify-center mb-6">
+                     <!-- Checkbox Icon (Green) matching screenshot somewhat -->
+                     <svg class="w-16 h-16 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
 
-</div>
+                <h1 class="text-3xl font-bold mb-4 text-black dark:text-white">Bienvenue sur CVitae</h1>
+                <p class="mb-4 text-lg">CVitae est une application web qui vous permet de créer et gérer vos CV en ligne facilement.</p>
+                <p class="mb-6">Vous voulez créer un CV ? <a href="{{ path('app_register') }}" class="text-primary hover:underline">Cliquez ici</a>.</p>
+            {% endif %}
 
+        </div>
+    </div>
 {% endblock %}

@@ -3,27 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mon site{% endblock %}</title>
+    <title>{% block title %}CVitae - Dashboard{% endblock %}</title>
     
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                },
+                extend: {
+                    colors: {
+                        primary: '#3C50E0',
+                        'primary-hover': '#2a4d9e',
+                        secondary: '#80CAEE',
+                        stroke: '#E2E8F0',
+                        gray: '#EFF4FB',
+                        whiten: '#F1F5F9',
+                        whiter: '#F5F7FD',
+                        boxdark: '#24303F',
+                        'boxdark-2': '#1A222C',
+                        strokedark: '#2E3A47',
+                        'form-strokedark': '#3d4d60',
+                        'form-input': '#1d2a39',
+                        'meta-1': '#DC3545',
+                        'meta-3': '#10B981',
+                        'meta-4': '#313D4A',
+                        success: '#219653',
+                        danger: '#D34053',
+                        warning: '#FCA5A5',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+
+    <style type="text/tailwindcss">
+        @layer components {
+            .btn {
+                @apply inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium !text-black hover:bg-opacity-90 lg:px-8 xl:px-10;
+            }
+            .btn-primary {
+                @apply bg-primary !text-black;
+            }
+            .table {
+                @apply w-full table-auto;
+            }
+            .table thead tr th {
+                @apply border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11 font-medium text-black dark:text-white;
+            }
+            .table tbody tr td {
+                @apply border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11 text-black dark:text-white;
+            }
+        }
+        @layer base {
+            body {
+                @apply font-sans text-base font-normal text-slate-600 dark:text-slate-400 bg-whiten dark:bg-boxdark-2;
+            }
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            textarea,
+            select {
+                @apply w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-black dark:text-white;
+            }
+            label {
+                @apply mb-2.5 block text-black dark:text-white font-medium;
+            }
+            h1 {
+                @apply text-3xl font-bold mb-6 text-black dark:text-white;
+            }
+            h2 {
+                @apply text-2xl font-bold mb-4 text-black dark:text-white;
+            }
+            h3 {
+                @apply text-xl font-bold mb-3 text-black dark:text-white;
+            }
+            a {
+                @apply text-primary hover:text-opacity-90;
+            }
+        }
+    </style>
+
     {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('css/index.css') }}">
     {% endblock %}
 </head>
-<body>
-    <div class="navbar-custom">
-        <a href="{{ path('app_index') }}">Accueil</a>
-        <a href="">Notre équipe</a>
-        <a href="{{ path('app_recherche') }}">Recherchez des CVs</a>    
-    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        <a href="{{ path('app_cv_index') }}">Vos CVs</a>
-        <a href="{{ path('app_logout') }}">Déconnexion</a>
-    {% else %}
-        <a href="{{ path('app_login') }}">Se connecter</a>
-    {% endif %}
+<body
+    x-data="{ sidebarToggle: false, darkMode: false }"
+    :class="{ 'dark bg-boxdark-2': darkMode === true }"
+>
+    <!-- ===== Page Wrapper Start ===== -->
+    <div class="flex h-screen overflow-hidden bg-gray-100 dark:bg-boxdark-2 text-slate-600 font-sans">
+
+        <!-- ===== Sidebar Start ===== -->
+        <aside class="absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-slate-900 text-white duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0"
+               :class="sidebarToggle ? 'translate-x-0' : '-translate-x-full'"
+               @click.outside="sidebarToggle = false">
+            
+            <!-- SIDEBAR HEADER -->
+            <div class="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
+                <a href="{{ path('app_index') }}" class="text-2xl font-bold text-white mt-10">
+                    CVitae
+                </a>
+                <button class="block lg:hidden" @click.stop="sidebarToggle = !sidebarToggle">
+                    <svg class="fill-current" width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 8.175H2.98748L9.36248 1.6875C9.69998 1.35 9.69998 0.825 9.36248 0.4875C9.02498 0.15 8.49998 0.15 8.16248 0.4875L0.399976 8.3625C0.0624756 8.7 0.0624756 9.225 0.399976 9.5625L8.16248 17.4375C8.31248 17.5875 8.53748 17.7 8.76248 17.7C8.98748 17.7 9.17498 17.625 9.36248 17.475C9.69998 17.1375 9.69998 16.6125 9.36248 16.275L3.02498 9.8625H19C19.45 9.8625 19.825 9.4875 19.825 9.0375C19.825 8.55 19.45 8.175 19 8.175Z" fill=""/>
+                    </svg>
+                </button>
+            </div>
+            <!-- SIDEBAR HEADER -->
+
+            <div class="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+                <!-- Sidebar Menu -->
+                <nav class="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
+                    <div>
+                        <h3 class="mb-4 ml-4 text-sm font-medium text-slate-400">MENU PRINCIPAL</h3>
+                        <ul class="mb-6 flex flex-col gap-1.5">
+                            <li>
+                                <a href="{{ path('app_index') }}" class="group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-slate-200 duration-300 ease-in-out hover:bg-slate-700 dark:hover:bg-meta-4">
+                                    Accueil
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-slate-200 duration-300 ease-in-out hover:bg-slate-700 dark:hover:bg-meta-4">
+                                    Notre équipe
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ path('app_recherche') }}" class="group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-slate-200 duration-300 ease-in-out hover:bg-slate-700 dark:hover:bg-meta-4">
+                                    Recherchez des CVs
+                                </a>
+                            </li>
+                            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                <li>
+                                    <a href="{{ path('app_cv_index') }}" class="group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-slate-200 duration-300 ease-in-out hover:bg-slate-700 dark:hover:bg-meta-4">
+                                        Vos CVs
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <div>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+        <!-- ===== Sidebar End ===== -->
+
+        <!-- ===== Content Area Start ===== -->
+        <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+
+            <!-- ===== Header Start ===== -->
+            <header class="sticky top-0 z-999 flex w-full bg-white drop-shadow-sm dark:bg-boxdark dark:drop-shadow-none">
+                <div class="flex flex-grow items-center justify-between px-4 py-4 shadow-sm md:px-6 2xl:px-11 relative min-h-[80px]">
+                    <div class="flex items-center gap-2 sm:gap-4 lg:hidden">
+                        <!-- Hamburger Toggle BTN -->
+                        <button class="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden" @click.stop="sidebarToggle = !sidebarToggle">
+                            <span class="relative block h-5.5 w-5.5 cursor-pointer">
+                                <span class="block absolute right-0 h-full w-full">
+                                    <span class="relative top-0 left-0 my-1 block h-0.5 w-0 rounded-sm bg-black delay-[0] duration-200 ease-in-out dark:bg-white" :class="!sidebarToggle && '!w-full delay-300'"></span>
+                                    <span class="relative top-0 left-0 my-1 block h-0.5 w-0 rounded-sm bg-black delay-150 duration-200 ease-in-out dark:bg-white" :class="!sidebarToggle && 'delay-400 !w-full'"></span>
+                                    <span class="relative top-0 left-0 my-1 block h-0.5 w-0 rounded-sm bg-black delay-200 duration-200 ease-in-out dark:bg-white" :class="!sidebarToggle && '!w-full delay-500'"></span>
+                                </span>
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="hidden sm:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-xl px-4">
+                        <form action="{{ path('app_recherche') }}" method="POST">
+                            <div class="relative">
+                                <button class="absolute left-0 top-1/2 -translate-y-1/2">
+                                    <svg class="fill-body hover:fill-primary dark:fill-bodydark dark:hover:fill-primary" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.16666 3.33332C5.945 3.33332 3.33332 5.945 3.33332 9.16666C3.33332 12.3883 5.945 15 9.16666 15C12.3883 15 15 12.3883 15 9.16666C15 5.945 12.3883 3.33332 9.16666 3.33332ZM1.66666 9.16666C1.66666 5.02452 5.02452 1.66666 9.16666 1.66666C13.3088 1.66666 16.6667 5.02452 16.6667 9.16666C16.6667 13.3088 13.3088 16.6667 9.16666 16.6667C5.02452 16.6667 1.66666 13.3088 1.66666 9.16666Z" fill="" />
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13.2857 13.2857C13.6112 12.9603 14.1388 12.9603 14.4642 13.2857L18.0892 16.9107C18.4147 17.2362 18.4147 17.7638 18.0892 18.0892C17.7638 18.4147 17.2362 18.4147 16.9107 18.0892L13.2857 14.4642C12.9603 14.1388 12.9603 13.6112 13.2857 13.2857Z" fill="" />
+                                    </svg>
+                                </button>
+                                <input type="text" placeholder="Rechercher..." class="w-full bg-transparent pl-9 pr-4 text-black focus:outline-none dark:text-white xl:w-125 font-normal" />
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="flex items-center gap-3 2xsm:gap-7 ml-auto">
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <!-- User Area -->
+                            <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
+                                <a class="flex items-center gap-4 cursor-pointer" href="#" @click.prevent="dropdownOpen = !dropdownOpen">
+                                    <span class="hidden text-right lg:block">
+                                        <span class="block text-sm font-medium text-black dark:text-white">{{ app.user.userIdentifier|default('Utilisateur') }}</span>
+                                        <span class="block text-xs">Connecté</span>
+                                    </span>
+
+                                    <span class="h-12 w-12 rounded-full overflow-hidden bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+                                        <!-- User SVG -->
+                                        <svg class="h-8 w-8 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                        </svg>
+                                    </span>
+                                    
+                                    <svg class="hidden fill-current sm:block" :class="dropdownOpen ? 'rotate-180' : ''" width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0.410765 0.910734C0.736202 0.585297 1.26384 0.585297 1.58928 0.910734L6.00002 5.32148L10.4108 0.910734C10.7362 0.585297 11.2638 0.585297 11.5893 0.910734C11.9147 1.23617 11.9147 1.76381 11.5893 2.08924L6.58928 7.08924C6.26384 7.41468 5.7362 7.41468 5.41077 7.08924L0.410765 2.08924C0.0853277 1.76381 0.0853277 1.23617 0.410765 0.910734Z" fill=""/>
+                                    </svg>
+                                </a>
+
+                                <!-- Dropdown Start -->
+                                <div x-show="dropdownOpen" 
+                                    class="absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"
+                                    style="display: none;">
+                                    <ul class="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
+                                        <li>
+                                            <a href="#" class="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+                                                <svg class="fill-current" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M10.9999 0.000104999C12.9233 0.000570327 14.8091 0.590506 16.3984 1.7001C17.9877 2.8097 19.2148 4.39123 19.9329 6.25585C20.651 8.12048 20.8299 10.1895 20.4485 12.2155C20.0671 14.2415 19.1409 16.1394 17.7797 17.683C16.4184 19.2267 14.6789 20.3516 12.7663 20.9238C10.8537 21.496 8.84717 21.4919 6.98068 20.9118C5.11419 20.3317 3.46592 19.2001 2.22894 17.6512C0.991965 16.1023 0.217855 14.2009 0.000185521 12.1751C-0.00223788 12.1526 -0.00223788 12.1299 0.000185521 12.1074C0.218324 10.082 0.993181 8.18128 2.23075 6.63319C3.46832 5.0851 5.11699 3.95423 6.98369 3.37494C8.85038 2.79566 10.8569 2.79257 12.7694 3.36592C14.6819 3.93928 16.421 5.06541 17.7816 6.61036C19.1422 8.15531 20.0674 10.0545 20.4477 12.0817C20.4501 12.0938 20.4523 12.106 20.4542 12.1182C20.8351 14.1437 20.0601 16.2125 18.2575 17.8465C16.4549 19.4804 14.0456 20.3061 11.5367 20.1884C9.02781 20.0706 6.65089 19.0202 4.83981 17.2796C3.02873 15.539 1.95478 13.2709 1.83416 10.9754C1.71354 8.67988 2.55938 6.48119 4.19237 4.85693C5.82536 3.23267 7.97018 2.37946 10.2783 2.47953C12.5864 2.5796 14.7779 3.61908 16.3213 5.38575C17.8647 7.15242 18.5771 9.45261 18.305 11.8306C18.0329 14.2087 16.8073 16.3768 14.8967 17.8767C12.9861 19.3765 10.6133 20.0359 8.242 19.7095C5.87067 19.383 3.766 18.0967 2.44917 16.148C1.13233 14.1994 0.730312 11.751 1.34867 9.41437C1.96704 7.07775 3.51865 5.06456 5.67295 3.82424C7.82725 2.58392 10.3533 2.22728 12.6738 2.82236C14.9942 3.41744 16.9234 4.88785 18.0703 6.90382C19.2173 8.91979 19.4939 11.3005 18.8463 13.5683C18.1988 15.8361 16.7027 17.7818 14.6565 19.0069C12.6103 20.2319 10.1834 20.6384 7.8596 20.1486C5.53581 19.6588 3.50974 18.3117 2.20399 16.3768C0.898242 14.4419 0.427806 12.0833 0.898166 9.80504C0.900976 9.79153 0.903932 9.77805 0.907034 9.76461C1.36551 7.77752 2.62886 6.03534 4.43632 4.90807C6.24378 3.78079 8.44111 3.40798 10.5367 3.84277C12.6324 4.27755 14.4534 5.48514 15.6174 7.21855C16.7813 8.95196 17.1866 11.0768 16.7262 13.1363C16.2657 15.1959 14.9814 16.9856 13.1417 18.1396C11.302 19.2936 9.09115 19.6866 6.94424 19.2318C4.79732 18.7771 2.92429 17.5255 1.74026 15.7533C0.556233 13.9812 0.170659 11.8384 0.613303 9.78917" fill=""/>
+                                                </svg>
+                                                Mon Profil
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="p-4">
+                                        <a href="{{ path('app_logout') }}" class="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base text-red-500">
+                                            Déconnexion
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- Dropdown End -->
+                            </div>
+                        {% else %}
+                             <a href="{{ path('app_login') }}" class="inline-flex items-center justify-center rounded-md border border-primary py-2 px-6 text-center font-medium text-primary hover:bg-opacity-90 lg:px-6 xl:px-6">
+                                Se connecter
+                             </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </header>
+            <!-- ===== Header End ===== -->
+
+            <!-- ===== Main Content Start ===== -->
+            <main>
+                <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+                    {% block body %}
+                    {% endblock %}
+                </div>
+            </main>
+            <!-- ===== Main Content End ===== -->
+
+        </div>
+        <!-- ===== Content Area End ===== -->
     </div>
-    
-    {% block body %}
-    {% endblock %}
+    <!-- ===== Page Wrapper End ===== -->
 </body>
 </html>
 

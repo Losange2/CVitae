@@ -1,3 +1,69 @@
-body {
-    background-color: skyblue;
+@import "tailwindcss";
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10;
+  }
+  .btn-primary {
+    @apply bg-primary text-white;
+  }
+  .table {
+    @apply w-full table-auto;
+  }
+  .table thead tr th {
+    @apply border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11 font-medium text-black dark:text-white;
+  }
+  .table tbody tr td {
+    @apply border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11 text-black dark:text-white;
+  }
 }
+
+@layer base {
+  body {
+    @apply font-sans;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea,
+  select {
+    @apply w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-black dark:text-white;
+  }
+  label {
+    @apply mb-2.5 block text-black dark:text-white font-medium;
+  }
+  h1 {
+    @apply text-3xl font-bold mb-6 text-black dark:text-white;
+  }
+  h2 {
+    @apply text-2xl font-bold mb-4 text-black dark:text-white;
+  }
+  h3 {
+    @apply text-xl font-bold mb-3 text-black dark:text-white;
+  }
+  a {
+     @apply text-primary hover:text-opacity-90;
+  }
+}
+
+@theme {
+  --color-primary: #3c50e0;
+  --color-primary-hover: #303f9f;
+  --color-secondary: #80caee;
+  --color-stroke: #e2e8f0;
+  --color-gray: #eff4fb;
+  --color-whiten: #f1f5f9;
+  --color-whiter: #f5f7fd;
+  --color-boxdark: #24303f;
+  --color-boxdark-2: #1a222c;
+  --color-strokedark: #2e3a47;
+  --color-form-strokedark: #3d4d60;
+  --color-form-input: #1d2a39;
+  --color-meta-4: #313d4a;
+  --color-success: #219653;
+  --color-danger: #d34053;
+  --color-warning: #fca5a5;
+  
+  --width-72.5: 18.125rem; /* 290px */
+}
+

@@ -18,6 +18,9 @@ class Cv
     #[ORM\Column(length: 255)]
     private ?string $Titre = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photoFilename = null;
+
     #[ORM\ManyToOne(inversedBy: 'les_cv')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $le_client = null;
@@ -46,6 +49,18 @@ class Cv
     public function setTitre(string $Titre): static
     {
         $this->Titre = $Titre;
+
+        return $this;
+    }
+
+    public function getPhotoFilename(): ?string
+    {
+        return $this->photoFilename;
+    }
+
+    public function setPhotoFilename(?string $photoFilename): static
+    {
+        $this->photoFilename = $photoFilename;
 
         return $this;
     }

@@ -23,7 +23,7 @@ CREATE DATABASE CVitae;
 -- Remplacer 'monuser' et 'monpassword' par ton choix
 CREATE USER 'monuser'@'*' IDENTIFIED BY 'monpassword';
 
-GRANT ALL PRIVILEGES ON CVitae.* TO 'monuser'@'*';
+GRANT ALL PRIVILEGES ON CVitae.* TO 'monuser'@'%';
 
 FLUSH PRIVILEGES;
 
@@ -191,7 +191,7 @@ ls -l
 **Cela renvoie (la date va dépendre de quand vous l'avez créé) :**
 ```
 operateur@debian:~/symfony-server$ ls -l
-total 16
+total 12
 -rw-r--r-- 1 operateur docker  477 15 déc.  10:11 docker-compose.yml
 -rw-r--r-- 1 operateur docker  247 15 déc.  10:32 Dockerfile
 -rw-r--r-- 1 operateur docker  502 15 déc.  10:13 nginx.conf
@@ -209,6 +209,8 @@ docker compose up -d
 ### Installation des dépendances dans le conteneur PHP
 ```bash
 sudo docker exec -it symfony-php bash
+```
+```bash
 apt update && apt install -y git unzip curl
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
@@ -217,9 +219,6 @@ git clone https://github.com/Losange2/CVitae
 
 ### Configuration de l'environnement
 ```bash
-docker run -it --rm \
-  -v $(pwd)/CVitae:/var/www/html \
-  cvitae bash
 cd CVitae
 apt update && apt install -y \
     git unzip zip libzip-dev \
@@ -268,6 +267,9 @@ pdo_mysql
 php bin/console doctrine:schema:update --force
 
 php bin/console doctrine:fixtures:load --no-interaction
+
+cd /var/www/html/CVitae
+php bin/console importmap:install
 
 ```
 **Vous pouvez vous connectez a l'ip de votre VM et cela devrait lancer l'application (si des problèmes vous arrive faites moi un issues**

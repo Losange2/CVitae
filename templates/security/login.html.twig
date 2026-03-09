@@ -1,39 +1,88 @@
 {% extends 'template.html.twig' %}
 
-{% block title %}Se connecter!{% endblock %}
+{% block title %}Se connecter - CVitae{% endblock %}
 
 {% block body %}
-    <form method="post">
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
+<div class="flex items-center justify-center min-h-[80vh]">
+    <div class="w-full max-w-lg rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+            <h3 class="font-semibold text-xl text-black dark:text-white text-center">
+                Connexion à CVitae
+            </h3>
+        </div>
+        <div class="p-6.5">
+            <form method="post">
+                {% if error %}
+                    <div class="mb-4 flex w-full border-l-6 border-[#F87171] bg-[#F87171] bg-opacity-[15%] px-7 py-8 shadow-md dark:bg-[#1B1B24] dark:bg-opacity-30 md:p-9">
+                        <div class="mr-5 flex h-9 w-full max-w-[36px] items-center justify-center rounded-lg bg-[#F87171]">
+                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6.4917 7.65579L11.106 12.2645C11.2545 12.4128 11.4715 12.5 11.6738 12.5C11.8762 12.5 12.0931 12.4128 12.2415 12.2645C12.5621 11.9445 12.5623 11.4317 12.2423 11.1114C12.2422 11.1113 12.2422 11.1113 12.2422 11.1113L7.6517 6.49667L12.2646 1.88997C12.5847 1.57024 12.5847 1.05742 12.2646 0.737691C11.9445 0.417961 11.4317 0.417961 11.1116 0.737691L6.49479 5.33967L1.88812 0.737691C1.56801 0.417961 1.05519 0.417961 0.735079 0.737691C0.414966 1.05742 0.414966 1.57024 0.735079 1.88997L5.33705 6.49667L0.739483 11.1091C0.419371 11.4289 0.419371 11.9417 0.739483 12.2614C1.0596 12.5811 1.57241 12.5811 1.89252 12.2614L6.4917 7.65579Z" fill="#ffffff" stroke="#ffffff"></path>
+                            </svg>
+                        </div>
+                        <div class="w-full">
+                            <h5 class="mb-3 text-lg font-bold text-[#F87171]">
+                                Erreur de connexion
+                            </h5>
+                            <p class="leading-relaxed text-[#CD5D5D]">
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
 
-        {% if app.user %}
-            <div class="mb-3">
-                Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Déconnexion</a>
-            </div>
-        {% endif %}
+                {% if app.user %}
+                    <div class="mb-4 text-center rounded-md border border-primary bg-primary bg-opacity-10 py-4 px-6 text-primary">
+                        Vous êtes déjà connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>. <br>
+                        <a href="{{ path('app_logout') }}" class="underline hover:text-opacity-90">Se déconnecter</a>
+                    </div>
+                {% endif %}
 
-        <h1 class="h3 mb-3 font-weight-normal">Veuillez vous connecter</h1>
-        <label for="username">Email</label>
-        <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
-        <label for="password">Mot de passe</label>
-        <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
-        <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+                <div class="mb-4">
+                    <label class="mb-2.5 block font-medium text-black dark:text-white text-center" for="username">
+                        Email
+                    </label>
+                    <div class="relative">
+                        <input type="email" value="{{ last_username }}" name="_username" id="username" placeholder="Entrez votre email" class="w-full rounded-lg border border-stroke bg-transparent py-4 text-center outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" autocomplete="email" required autofocus>
+                        
+                        <span class="absolute right-4 top-4">
+                            <svg class="fill-current" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M11.0001 9.62503C12.3808 9.62503 13.5001 8.50574 13.5001 7.12503C13.5001 5.74431 12.3808 4.62503 11.0001 4.62503C9.61935 4.62503 8.50006 5.74431 8.50006 7.12503C8.50006 8.50574 9.61935 9.62503 11.0001 9.62503ZM1.66675 16.5C1.66675 14.1989 3.53223 12.3334 5.83341 12.3334H16.1667C18.4679 12.3334 20.3334 14.1989 20.3334 16.5C20.3334 16.9602 19.9603 17.3334 19.5001 17.3334H2.50008C2.03984 17.3334 1.66675 16.9602 1.66675 16.5Z" fill=""/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
 
-        {#
-            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-            See https://symfony.com/doc/current/security/remember_me.html
+                <div class="mb-6">
+                    <label class="mb-2.5 block font-medium text-black dark:text-white text-center" for="password">
+                        Mot de passe
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="_password" id="password" placeholder="Entrez votre mot de passe" class="w-full rounded-lg border border-stroke bg-transparent py-4 text-center outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" autocomplete="current-password" required>
+                        
+                        <span class="absolute right-4 top-4">
+                            <svg class="fill-current" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.5833 8.24997H14.6667V6.41664C14.6667 4.39497 13.0217 2.74997 11 2.74997C8.97833 2.74997 7.33333 4.39497 7.33333 6.41664V8.24997H6.41667C5.40583 8.24997 4.58333 9.07247 4.58333 10.0833V16.5C4.58333 17.5108 5.40583 18.3333 6.41667 18.3333H15.5833C16.5942 18.3333 17.4167 17.5108 17.4167 16.5V10.0833C17.4167 9.07247 16.5942 8.24997 15.5833 8.24997ZM11 14.6666C10.2417 14.6666 9.625 14.05 9.625 13.2916C9.625 12.5333 10.2417 11.9166 11 11.9166C11.7583 11.9166 12.375 12.5333 12.375 13.2916C12.375 14.05 11.7583 14.6666 11 14.6666ZM9.16667 8.24997V6.41664C9.16667 5.40581 9.98917 4.58331 11 4.58331C12.0108 4.58331 12.8333 5.40581 12.8333 6.41664V8.24997H9.16667Z" fill=""/>
+                            </svg>
+                        </span>
+                    </div>
+                </div>
 
-            <div class="checkbox mb-3">
-                <input type="checkbox" name="_remember_me" id="_remember_me">
-                <label for="_remember_me">Remember me</label>
-            </div>
-        #}
+                <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
-        <button class="btn btn-lg btn-primary" type="submit">
-            Se connecter
-        </button>
-        <p>Vous n'avez pas de compte ? <a href="{{ path('app_register') }}">S'inscrire</a></p>
-    </form>
+                <div class="mb-5">
+                    <button class="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90 font-medium" type="submit">
+                        Se connecter
+                    </button>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <p class="font-medium">
+                        Vous n'avez pas de compte ? 
+                        <a href="{{ path('app_register') }}" class="text-primary hover:underline">S'inscrire</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

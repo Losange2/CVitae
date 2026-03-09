@@ -1,70 +1,184 @@
 {% extends 'template.html.twig' %}
 
-{% block title %}Cv{% endblock %}
+{% block title %}Détails du CV - CVitae{% endblock %}
 
 {% block body %}
-    <h1>Cv</h1>
+    {# 1. Data Preparation: Group points by category #}
+    {% set categories = {} %}
+    {% for point in cv.getLesPoints() %}
+        {% if point.getLaCate() is not null %}
+            {% set cateId = 'cat_' ~ point.getLaCate().id %}
+            {% set cateName = point.getLaCate().libelle %}
+            
+            {% if categories[cateId] is not defined %}
+                {# Create new category entry #}
+                {% set categories = categories|merge({(cateId): {name: cateName, points: [point]}}) %}
+            {% else %}
+                {# Append point to existing category #}
+                {% set currentPoints = categories[cateId].points|merge([point]) %}
+                {% set categories = categories|merge({(cateId): {name: cateName, points: currentPoints}}) %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th style="text-align: center;">Titre</th>
-            </tr>
-            <tr>
-                <td style="text-align: center;">{{ cv.Titre }}</td>
-            </tr>
-            <tr>
-                <td>
-                    {% set categories = {} %}
-                    {% for point in cv.getLesPoints() %}
-                        {% set cateId = 'cat_' ~ point.getLaCate().id %}
-                        {% set cateName = point.getLaCate().libelle %}
-                        {% if categories[cateId] is not defined %}
-                            {% set categories = categories|merge({(cateId): {name: cateName, points: []}}) %}
-                        {% endif %}
-                        {% set categories = categories|merge({(cateId): {name: cateName, points: categories[cateId].points|merge([point])}}) %}
-                    {% endfor %}
-                    
-                    <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
-                        {% for cateId, category in categories %}
-                            <div class="category" style="flex: 0 1 auto;">
-                                <details {{ loop.first ? 'open' : '' }} onclick="document.querySelectorAll('details').forEach(d => { if(d !== this) d.removeAttribute('open'); })">
-                                    <summary style="cursor: pointer; font-weight: bold; text-align: center;">{{ category.name }}</summary>
-                                    <ul>
-                                        {% for point in category.points %}
-                                            <li>{{ point.libelle }}</li>
-                                            {% if is_granted('ROLE_USER') and app.user == cv.getLeClient() %}
-                                            <button class="btn" onclick="location.href='{{ path('app_point_edit', {'id': point.id}) }}'">edit</button>
-                                            {{ include('point/_delete_form.html.twig', {'point': point}) }}
-                                            {% endif %}
-                                        {% endfor %}
-                                    </ul>
-                                </details>
-                            </div>
-                        {% endfor %}
+    <div class="mx-auto max-w-screen-xl px-4 md:px-8 py-8 min-h-[80vh]">
+        <!-- Header Section -->
+        <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
+            <div>
+                <h2 class="text-2xl font-bold text-black dark:text-white mb-1">
+                    {{ cv.titre }}
+                </h2>
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    CV créé par <span class="text-primary">{{ cv.leClient.prenom }} {{ cv.leClient.nom }}</span>
+                </p>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-3" x-data="{ showPdfModal: false }">
+                {% if app.user == cv.leClient %}
+                    <button @click="showPdfModal = true" class="inline-flex items-center justify-center gap-2.5 rounded-md border border-primary py-2 px-6 text-center font-medium text-primary hover:bg-opacity-90 hover:bg-primary hover:text-white transition lg:px-6 xl:px-6">
+                        <span>
+                            <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M3 13.75C3 14.1642 3.33579 14.5 3.75 14.5H16.25C16.6642 14.5 17 14.1642 17 13.75C17 13.3358 16.6642 13 16.25 13H3.75C3.33579 13 3 13.3358 3 13.75ZM3 16.75C3 17.1642 3.33579 17.5 3.75 17.5H16.25C16.6642 17.5 17 17.1642 17 16.75C17 16.3358 16.6642 16 16.25 16H3.75C3.33579 16 3 16.3358 3 16.75ZM10.5303 10.5303C10.2374 10.8232 9.76256 10.8232 9.46967 10.5303L6.21967 7.28033C5.92678 6.98744 5.92678 6.51256 6.21967 6.21967C6.51256 5.92678 6.98744 5.92678 7.28033 6.21967L9.25 8.18934V2.75C9.25 2.33579 9.58579 2 10 2C10.4142 2 10.75 2.33579 10.75 2.75V8.18934L12.7197 6.21967C13.0126 5.92678 13.4874 5.92678 13.7803 6.21967C14.0732 6.51256 14.0732 6.98744 13.7803 7.28033L10.5303 10.5303Z" fill=""/>
+                            </svg>
+                        </span>
+                        PDF
+                    </button>
+
+                    <!-- Modal -->
+                    <div x-show="showPdfModal" style="display: none;" 
+                         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 py-5" 
+                         x-transition:enter="ease-out duration-300" 
+                         x-transition:enter-start="opacity-0" 
+                         x-transition:enter-end="opacity-100" 
+                         x-transition:leave="ease-in duration-200" 
+                         x-transition:leave-start="opacity-100" 
+                         x-transition:leave-end="opacity-0">
+                         
+                         <div @click.outside="showPdfModal = false" 
+                              class="w-full max-w-lg rounded-lg bg-white p-8 text-center shadow-2xl dark:bg-boxdark" 
+                              x-transition:enter="ease-out duration-300" 
+                              x-transition:enter-start="opacity-0 scale-95" 
+                              x-transition:enter-end="opacity-100 scale-100" 
+                              x-transition:leave="ease-in duration-200" 
+                              x-transition:leave-start="opacity-100 scale-100" 
+                              x-transition:leave-end="opacity-0 scale-95">
+                            
+                            <h3 class="mb-2 text-2xl font-bold text-black dark:text-white">
+                                Générer le PDF
+                            </h3>
+                            <p class="mb-8 text-sm text-gray-500 dark:text-gray-400">
+                                Vous pouvez ajouter une photo à votre CV avant l'exportation.
+                            </p>
+
+                            <form action="{{ path('app_cv_pdf', {'id': cv.id}) }}" method="post" enctype="multipart/form-data" class="text-left">
+                                <input type="hidden" name="_token" value="{{ csrf_token('pdf_photo_' ~ cv.id) }}">
+                                
+                                <div class="mb-8">
+                                    <label class="mb-3 block text-sm font-medium text-black dark:text-white">
+                                        Photo de profil (Optionnel)
+                                    </label>
+                                    <input type="file" name="photo" accept="image/png, image/jpeg" 
+                                           class="w-full cursor-pointer rounded-lg border border-dashed border-primary bg-gray-50 p-4 outline-none transition hover:bg-gray-100 focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:hover:bg-meta-4" />
+                                </div>
+
+                                <div class="flex gap-4">
+                                    <button type="button" @click="showPdfModal = false" class="flex-1 rounded-md border border-stroke bg-gray-100 py-3 px-6 font-medium text-black transition hover:bg-gray-200 dark:border-strokedark dark:bg-meta-4 dark:text-white dark:hover:bg-opacity-80">
+                                        Annuler
+                                    </button>
+                                    <button type="submit" class="flex-1 rounded-md bg-primary py-3 px-6 font-medium text-white transition hover:bg-opacity-90 shadow-md">
+                                        Générer
+                                    </button>
+                                </div>
+                            </form>
+                         </div>
                     </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <a href="{{ path('app_cv_pdf', {'id': cv.id}) }}" class="btn btn-secondary">Exporter en PDF</a>
+                {% else %}
+                <a href="{{ path('app_cv_pdf', {'id': cv.id}) }}" class="inline-flex items-center justify-center gap-2.5 rounded-md border border-primary py-2 px-6 text-center font-medium text-primary hover:bg-opacity-90 hover:bg-primary hover:text-white transition lg:px-6 xl:px-6">
+                    <span>
+                        <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M3 13.75C3 14.1642 3.33579 14.5 3.75 14.5H16.25C16.6642 14.5 17 14.1642 17 13.75C17 13.3358 16.6642 13 16.25 13H3.75C3.33579 13 3 13.3358 3 13.75ZM3 16.75C3 17.1642 3.33579 17.5 3.75 17.5H16.25C16.6642 17.5 17 17.1642 17 16.75C17 16.3358 16.6642 16 16.25 16H3.75C3.33579 16 3 16.3358 3 16.75ZM10.5303 10.5303C10.2374 10.8232 9.76256 10.8232 9.46967 10.5303L6.21967 7.28033C5.92678 6.98744 5.92678 6.51256 6.21967 6.21967C6.51256 5.92678 6.98744 5.92678 7.28033 6.21967L9.25 8.18934V2.75C9.25 2.33579 9.58579 2 10 2C10.4142 2 10.75 2.33579 10.75 2.75V8.18934L12.7197 6.21967C13.0126 5.92678 13.4874 5.92678 13.7803 6.21967C14.0732 6.51256 14.0732 6.98744 13.7803 7.28033L10.5303 10.5303Z" fill=""/>
+                        </svg>
+                    </span>
+                    PDF
+                </a>
+                {% endif %}
 
-{% if is_granted('ROLE_ADMIN') %}
-    <a href="{{ path('app_cv_index') }}">back to list</a>
+                {% if (is_granted('ROLE_USER') and app.user == cv.getLeClient()) or is_granted('ROLE_ADMIN') %}
+                    <form method="post" action="{{ path('app_creer_remplissage') }}" style="display:inline">
+                        <input type="hidden" name="cv_id" value="{{ cv.id }}">
+                        <button class="inline-flex items-center justify-center gap-2.5 rounded-md bg-primary py-2 px-6 text-center font-medium text-white hover:bg-opacity-90 lg:px-6 xl:px-6" type="submit">
+                           <span>
+                               <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                   <path d="M10 4.16666V15.8333" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                   <path d="M4.16669 10H15.8334" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                               </svg>
+                           </span>
+                           Ajouter info
+                        </button>
+                    </form>
+                    
+                    <a href="{{ path('app_cv_edit', {'id': cv.id}) }}" class="inline-flex items-center justify-center rounded-md bg-meta-3 py-2 px-6 text-center font-medium text-black hover:bg-opacity-90 lg:px-6 xl:px-6">
+                        Modifier titre
+                    </a>
 
-    <a href="{{ path('app_cv_edit', {'id': cv.id}) }}">edit</a>
-    
+                    <div class="inline-block relative">
+                         {{ include('cv/_delete_form.html.twig', {'button_class': 'inline-flex items-center justify-center rounded-md bg-meta-1 py-2 px-6 text-center font-medium text-white hover:bg-opacity-90 lg:px-6 xl:px-6'}) }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
 
-
-    {{ include('cv/_delete_form.html.twig') }}
-
-{% endif %}
-{% if is_granted('ROLE_USER') and app.user == cv.getLeClient() %}
-    <button class="btn" onclick="location.href='{{ path('app_cv_edit', {'id': cv.id}) }}'">edit</button>
-    <form method="post" action="{{ path('app_creer_remplissage') }}" style="display:inline">
-        <input type="hidden" name="cv_id" value="{{ cv.id }}">
-        <button class="btn" type="submit">Add Point</button>
-    </form>
-    {{ include('cv/_delete_form.html.twig') }}
-{% endif %}
+        <!-- Structure Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            {% for cateId, category in categories %}
+                <div class="h-fit rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                    <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark bg-gray-50 dark:bg-meta-4 flex justify-center">
+                        <h3 class="font-bold text-lg text-black dark:text-white uppercase tracking-wider">
+                            {{ category.name }}
+                        </h3>
+                    </div>
+                    <div class="p-6.5">
+                        <ul class="flex flex-col gap-4">
+                            {% for point in category.points %}
+                                <li class="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded hover:bg-gray-100 dark:hover:bg-meta-4 transition">
+                                    <span class="font-medium text-black dark:text-white">{{ point.libelle }}</span>
+                                    
+                                    {% if (is_granted('ROLE_USER') and app.user == cv.getLeClient()) or is_granted('ROLE_ADMIN') %}
+                                        <div class="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                            <a href="{{ path('app_point_edit', {'id': point.id}) }}" class="flex h-8 w-8 items-center justify-center rounded-full border border-stroke hover:border-primary hover:bg-primary hover:text-white dark:border-strokedark dark:hover:border-primary transition" title="Modifier">
+                                                <svg class="fill-current" width="14" height="14" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M16.875 2.625L15.375 1.125C14.7188 0.46875 13.6313 0.46875 12.975 1.125L2.11875 11.9813L1.5 15.9375C1.40625 16.5281 1.92188 17.0437 2.5125 16.95L6.46875 16.3312L17.325 5.475C17.9813 4.81875 17.9813 3.73125 16.875 2.625ZM5.64375 15.0938L3.13125 15.4875L3.525 12.975L11.775 4.725L13.8938 6.84375L5.64375 15.0938Z" fill=""/>
+                                                </svg>
+                                            </a>
+                                            
+                                            <div class="delete-point-form-wrapper">
+                                                {{ include('point/_delete_form.html.twig', {
+                                                    'point': point, 
+                                                    'button_class': 'flex h-8 w-8 items-center justify-center rounded-full border border-stroke hover:border-meta-1 hover:bg-meta-1 hover:text-white dark:border-strokedark dark:hover:border-meta-1 transition',
+                                                    'button_label': '<svg class="fill-current" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 1.5L12 0L6.75 5.25L1.5 0L0 1.5L5.25 6.75L0 12L1.5 13.5L6.75 8.25L12 13.5L13.5 12L8.25 6.75L13.5 1.5Z" fill=""/></svg>'
+                                                }) }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-1 md:col-span-2 rounded-sm border border-stroke bg-white p-10 shadow-default dark:border-strokedark dark:bg-boxdark text-center">
+                    <p class="text-xl font-medium text-black dark:text-white mb-4">Ce CV est encore vide.</p>
+                    <p class="mb-6">Commencez par ajouter des formations, expériences ou compétences.</p>
+                    {% if (is_granted('ROLE_USER') and app.user == cv.getLeClient()) or is_granted('ROLE_ADMIN') %}
+                        <form method="post" action="{{ path('app_creer_remplissage') }}" style="display:inline">
+                            <input type="hidden" name="cv_id" value="{{ cv.id }}">
+                            <button class="inline-flex items-center justify-center gap-2.5 rounded-md bg-primary py-3 px-8 text-center font-medium text-white hover:bg-opacity-90" type="submit">
+                            Commencer le remplissage
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
