@@ -2,35 +2,135 @@
 {% block title %}Accueil - CVitae{% endblock %}
 
 {% block body %}
-    <div class="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-        <div class="max-w-full overflow-x-auto py-6 text-center">
-            
-            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                <h1 class="text-2xl font-bold mb-4 text-black dark:text-white">Bonjour {{ app.user.prenom }} {{ app.user.nom }}</h1>
-                <h2 class="text-xl mb-6">Voici la liste de vos CVs :</h2>
-                
-                <ul class="flex flex-col gap-3 mb-6 items-center">
+    
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <div class="mb-6 flex flex-col items-center justify-center gap-4 text-center">
+            <h2 class="text-title-md2 font-semibold text-black dark:text-white">
+                Bonjour, {{ app.user.prenom|default('Utilisateur') }} !
+            </h2>
+            <nav>
+                <a href="{{ path('app_creer') }}" class="inline-flex items-center justify-center gap-2.5 rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10">
+                    <span>
+                        <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 4.16666V15.8333" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M4.16669 10H15.8334" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>                                
+                    </span>
+                    Nouveau CV
+                </a>
+            </nav>
+        </div>
+
+        {% if cvs is empty %}
+            <div class="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+                <div class="flex flex-col items-center justify-center py-10 text-center">
+                    <div class="mb-6 h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center text-primary dark:bg-meta-4">
+                         <svg class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold text-black dark:text-white">Vous n'avez pas encore de CV</h3>
+                    <p class="mb-6 text-base font-medium">Commencez dès maintenant en créant votre premier CV professionnel.</p>
+                    <a href="{{ path('app_creer') }}" class="inline-flex items-center justify-center rounded-md bg-primary py-3 px-8 text-center font-medium text-white hover:bg-opacity-90">Créer mon premier CV</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                 {% for cv in cvs %}
-                    {% if cv.getLeClient() == app.user %}
-                        <li class="bg-gray-100 dark:bg-meta-4 p-3 rounded-md w-full max-w-md">{{ cv.titre }}</li>
+                    {% if cv.leClient == app.user %}
+                    <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                        <div class="border-b border-stroke px-4 py-4 dark:border-strokedark md:px-6 md:py-5">
+                            <h3 class="font-medium text-black dark:text-white text-lg truncate">
+                                {{ cv.titre }}
+                            </h3>
+                             <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Mise à jour récente
+                            </div>
+                        </div>
+                        <div class="p-4 md:p-6">
+                            <div class="flex flex-col gap-2 mt-auto">
+                                <div class="flex gap-2">
+                                    <a href="{{ path('app_cv_show', {'id': cv.id}) }}" class="flex-1 inline-flex items-center justify-center rounded-md border border-primary py-2 px-4 text-center font-medium text-primary hover:bg-opacity-90 hover:text-white hover:bg-primary transition">
+                                        Editer
+                                    </a>
+                                    <a href="{{ path('app_cv_pdf', {'id': cv.id}) }}" class="flex-1 inline-flex items-center justify-center rounded-md bg-meta-3 py-2 px-4 text-center font-medium text-white hover:bg-opacity-90 transition">
+                                        PDF
+                                    </a>
+                                </div>
+                                <form method="post" action="{{ path('app_cv_delete', {'id': cv.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce CV ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cv.id) }}">
+                                    <button class="w-full inline-flex items-center justify-center rounded-md border border-danger py-2 px-4 text-center font-medium text-danger hover:bg-danger hover:text-white transition">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     {% endif %}
                 {% endfor %}
-                </ul>
+            </div>
+        {% endif %}
 
-                <a href="{{ path('app_creer') }}" class="inline-flex items-center justify-center rounded-md bg-primary py-3 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10">Créer un nouveau CV</a>
-            {% endif %}
-
-            {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
-                <div class="flex justify-center mb-6">
-                     <!-- Checkbox Icon (Green) matching screenshot somewhat -->
-                     <svg class="w-16 h-16 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    {% else %}
+        {# GUEST VIEW #}
+        <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark mb-6">
+            <div class="px-4 py-10 md:px-8 lg:px-12 lg:py-16 text-center lg:text-left">
+                <div class="lg:flex lg:items-center lg:justify-between gap-8">
+                    <div class="lg:w-1/2">
+                        <h1 class="text-3xl font-bold text-black dark:text-white sm:text-4xl mb-6">
+                            Créez votre CV professionnel <span class="text-primary block mt-2">en quelques minutes</span>
+                        </h1>
+                        <p class="mb-8 text-lg text-gray-600 dark:text-gray-300">
+                            CVitae est l'outil ultime pour construire, gérer et exporter vos CVs. Mettez en valeur votre parcours et décrochez l'emploi de vos rêves avec une présentation impeccable.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                            <a href="{{ path('app_register') }}" class="inline-flex items-center justify-center rounded-md bg-primary py-3 px-8 text-center font-medium text-white hover:bg-opacity-90 text-lg">
+                                Commencer
+                            </a>
+                            <a href="{{ path('app_login') }}" class="inline-flex items-center justify-center rounded-md border border-stroke bg-gray py-3 px-8 text-center font-medium text-black hover:border-primary hover:bg-gray-100 dark:border-strokedark dark:bg-meta-4 dark:text-white dark:hover:border-primary">
+                                Se connecter
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hidden lg:block lg:w-1/2">
+                        <div class="relative mx-auto rounded-lg bg-gray-100 dark:bg-meta-4 p-8 flex items-center justify-center h-80">
+                            <!-- Simple Illustration Placeholder -->
+                            <div class="text-center">
+                                <div class="w-20 h-20 bg-primary/20 rounded-full mx-auto mb-4 flex items-center justify-center text-primary">
+                                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                </div>
+                                <h3 class="text-xl font-bold mb-1 dark:text-white">CV Professionnel</h3>
+                                <p class="text-sm dark:text-gray-400">Export PDF · Design Clean</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <h1 class="text-3xl font-bold mb-4 text-black dark:text-white">Bienvenue sur CVitae</h1>
-                <p class="mb-4 text-lg">CVitae est une application web qui vous permet de créer et gérer vos CV en ligne facilement.</p>
-                <p class="mb-6">Vous voulez créer un CV ? <a href="{{ path('app_register') }}" class="text-primary hover:underline">Cliquez ici</a>.</p>
-            {% endif %}
-
+            </div>
         </div>
-    </div>
+
+        <div class="grid gap-6 md:grid-cols-3">
+             <div class="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary bg-opacity-10 text-primary">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </div>
+                <h3 class="mb-2 text-xl font-bold text-black dark:text-white">Édition Simple</h3>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Remplissez vos informations une seule fois.</p>
+            </div>
+
+            <div class="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-meta-3 bg-opacity-10 text-meta-3">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                </div>
+                <h3 class="mb-2 text-xl font-bold text-black dark:text-white">Export PDF</h3>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Générez des PDF impeccables instantanément.</p>
+            </div>
+
+            <div class="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
+                    <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary bg-opacity-10 text-secondary">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+                <h3 class="mb-2 text-xl font-bold text-black dark:text-white">Gratuit</h3>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Utilisez toutes les fonctionnalités gratuitement.</p>
+            </div>
+        </div>
+    {% endif %}
+
 {% endblock %}

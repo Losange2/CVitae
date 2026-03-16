@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions Légales & CGU{% endblock %}
+
+{% block body %}
+<div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h2 class="text-title-md2 font-semibold text-black dark:text-white">
+            Mentions Légales & CGU
+        </h2>
+        <nav>
+            <ol class="flex items-center gap-2">
+                <li><a class="font-medium" href="{{ path('app_index') }}">Tableau de bord /</a></li>
+                <li class="font-medium text-primary">Mentions légales</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        <div class="max-w-full overflow-x-auto">
+            <div class="p-6 text-black dark:text-white prose dark:prose-invert max-w-none">
+                
+                <h3 class="text-xl font-bold mb-4 mt-8">1. Éditeur du site</h3>
+                <p class="mb-4">
+                    Le présent site CVitae est édité par :<br>
+                    <strong>Nom / Raison sociale :</strong> CVitae<br>
+                    <strong>Adresse :</strong> 62 rue Saint Chéron, 28000 Chartres, France<br>
+                    <strong>Email :</strong> mathias.leculee@fulbert.fr<br>
+                    <strong>Directeur de la publication :</strong> [Nom du Directeur]
+                </p>
+
+                <h3 class="text-xl font-bold mb-4 mt-8">2. Hébergement</h3>
+                <p class="mb-4">
+                    Le Site est hébergé par :<br>
+                    <strong>Hébergeur :</strong> Aucun <br>
+                    <strong>Adresse :</strong> 62 rue Saint Chéron, 28000 Chartres, France<br>
+                </p>
+
+                <h3 class="text-xl font-bold mb-4 mt-8">3. Propriété intellectuelle</h3>
+<p class="mb-4">
+    L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur et la propriété intellectuelle. Tous les droits de reproduction sont réservés, y compris pour les documents téléchargeables ainsi que les représentations iconographiques, photographiques et textes présents sur le site.
+</p>
+<p class="mb-4">
+    Toute reproduction, représentation, modification, publication ou adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite sauf autorisation écrite préalable de l’éditeur.
+</p>
+
+<h3 class="text-xl font-bold mb-4 mt-8">4. Protection des données personnelles (RGPD)</h3>
+<p class="mb-4">
+    Dans le cadre de l’utilisation du site et lors de l’inscription, certaines données personnelles peuvent être collectées, notamment : nom, prénom, adresse postale, numéro de téléphone portable, adresse email et toute autre information nécessaire au fonctionnement du service proposé.
+</p>
+<p class="mb-4">
+    Ces informations sont utilisées uniquement dans le cadre de la gestion des comptes utilisateurs, de la communication avec les utilisateurs et du bon fonctionnement des services proposés sur le site.
+</p>
+<p class="mb-4">
+    Conformément au Règlement Général sur la Protection des Données (RGPD), vous disposez d’un droit d’accès, de rectification, de suppression et de limitation du traitement de vos données personnelles. Vous pouvez également vous opposer au traitement de vos données.
+</p>
+<p class="mb-4">
+    Pour exercer ces droits, vous pouvez contacter l’éditeur du site à l’adresse email indiquée dans les mentions légales.
+</p>
+<p class="mb-4">
+    Les données personnelles collectées ne sont ni vendues, ni échangées, ni cédées à des tiers sans le consentement de l’utilisateur, sauf obligation légale.
+</p>
+
+<h3 class="text-xl font-bold mb-4 mt-8">5. Cookies</h3>
+<p class="mb-4">
+    Le site peut utiliser des cookies afin d'améliorer l'expérience utilisateur, faciliter la navigation et réaliser des statistiques de fréquentation. 
+</p>
+<p class="mb-4">
+    L’utilisateur peut configurer son navigateur afin de refuser les cookies ou être informé de leur utilisation. Toutefois, certaines fonctionnalités du site peuvent être limitées en cas de refus des cookies.
+</p>
+
+<h3 class="text-xl font-bold mb-4 mt-8">6. Responsabilité</h3>
+<p class="mb-4">
+    L’éditeur du site s’efforce de fournir des informations aussi précises que possible. Toutefois, il ne pourra être tenu responsable des omissions, inexactitudes ou carences dans la mise à jour des informations.
+</p>
+<p class="mb-4">
+    L’éditeur ne pourra être tenu responsable des dommages directs ou indirects causés au matériel de l’utilisateur lors de l’accès au site, ni des conséquences liées à l’utilisation des informations présentes sur le site.
+</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

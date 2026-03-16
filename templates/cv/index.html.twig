@@ -3,67 +3,91 @@
 {% block title %}Mes CVs - CVitae{% endblock %}
 
 {% block body %}
-<div class="mx-auto max-w-screen-xl px-4 md:px-8 py-8 min-h-[80vh]">
-    <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark flex flex-col sm:flex-row justify-between items-center gap-4">
-            <h3 class="font-semibold text-xl text-black dark:text-white text-center sm:text-left">
-                Mes CVs
-            </h3>
-            <a href="{{ path('app_creer') }}" class="inline-flex items-center justify-center rounded bg-primary py-2 px-6 font-medium text-white hover:bg-opacity-90">
-                Créer un nouveau CV
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900 py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+        {# Entête de la section #}
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Mes CVs</h1>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Gérez vos CVs et créez-en de nouveaux en toute simplicité.</p>
+            </div>
+            <a href="{{ path('app_creer') }}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Nouveau CV
             </a>
         </div>
-        
-        <div class="p-6.5">
+
+        {# Carte principale #}
+        <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg border border-gray-200 dark:border-gray-700">
             <div class="overflow-x-auto">
-                <table class="w-full table-auto">
-                    <thead>
-                        <tr class="bg-gray-2 text-left dark:bg-meta-4">
-                            <th class="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white text-center">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                 Titre du CV
                             </th>
-                            <th class="py-4 px-4 font-medium text-black dark:text-white text-center">
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider w-48">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                    {% set has_cv = false %}
-                    {% for cv in cvs %}
-                        {% if cv.leClient == app.user %}
-                            {% set has_cv = true %}
-                            <tr class="border-b border-stroke dark:border-strokedark">
-                                <td class="py-5 px-4 dark:border-strokedark text-center">
-                                    <h5 class="font-medium text-black dark:text-white">
-                                        {{ cv.titre }}
-                                    </h5>
-                                </td>
-                                <td class="py-5 px-4 dark:border-strokedark text-center">
-                                    <div class="flex items-center space-x-3.5 justify-center">
-                                        <a href="{{ path('app_cv_show', {'id': cv.id}) }}" class="hover:text-primary" title="Voir">
-                                            <svg class="fill-current" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M8.99981 14.8219C5.84981 14.8219 2.94981 12.9094 1.64981 9.675C0.349813 6.44062 0.349813 2.75625 1.64981 0.478125C2.94981 -2.75625 5.84981 -4.66875 8.99981 -4.66875C12.1498 -4.66875 15.0498 -2.75625 16.3498 0.478125C17.6498 2.75625 17.6498 6.44062 16.3498 9.675C15.0498 12.9094 12.1498 14.8219 8.99981 14.8219ZM8.99981 2.22188C6.91856 2.22188 5.23106 3.90938 5.23106 5.99062C5.23106 8.07188 6.91856 9.75938 8.99981 9.75938C11.0811 9.75938 12.7686 8.07188 12.7686 5.99062C12.7686 3.90938 11.0811 2.22188 8.99981 2.22188Z" fill=""/>
-                                                <path d="M9 13.125C6.01875 13.125 3.32812 11.4562 2 8.4375C3.32812 5.41875 6.01875 3.75 9 3.75C11.9812 3.75 14.6719 5.41875 16 8.4375C14.6719 11.4562 11.9812 13.125 9 13.125ZM9 5.625C7.34375 5.625 6 6.96875 6 8.625C6 10.2812 7.34375 11.625 9 11.625C10.6562 11.625 12 10.2812 12 8.625C12 6.96875 10.6562 5.625 9 5.625Z" fill=""/>
-                                            </svg>
-                                        </a>
-                                        <a href="{{ path('app_cv_edit', {'id': cv.id}) }}" class="hover:text-primary" title="Modifier">
-                                           <svg class="fill-current" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                              <path d="M16.875 2.625L15.375 1.125C14.7188 0.46875 13.6313 0.46875 12.975 1.125L2.11875 11.9813L1.5 15.9375C1.40625 16.5281 1.92188 17.0437 2.5125 16.95L6.46875 16.3312L17.325 5.475C17.9813 4.81875 17.9813 3.73125 16.875 2.625ZM5.64375 15.0938L3.13125 15.4875L3.525 12.975L11.775 4.725L13.8938 6.84375L5.64375 15.0938Z" fill=""/>
-                                           </svg>
-                                        </a>
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        {% set has_cv = false %}
+                        {% for cv in cvs %}
+                            {% if cv.leClient == app.user %}
+                                {% set has_cv = true %}
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            {% if cv.photoFilename %}
+                                                <img class="h-10 w-10 rounded-full object-cover" src="{{ asset('uploads/photos/' ~ cv.photoFilename) }}" alt="{{ cv.titre }}">
+                                            {% else %}
+                                                <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-blue-100 rounded-full text-blue-600 dark:bg-blue-900 dark:text-blue-300">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                </div>
+                                            {% endif %}
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{ cv.titre }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                                        <div class="flex items-center justify-center space-x-4">
+                                            <a href="{{ path('app_cv_show', {'id': cv.id}) }}" class="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors duration-200" title="Voir">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            </a>
+                                            <a href="{{ path('app_cv_edit', {'id': cv.id}) }}" class="text-gray-500 hover:text-yellow-600 dark:text-gray-400 dark:hover:text-yellow-400 transition-colors duration-200" title="Modifier">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if not has_cv %}
+                            <tr>
+                                <td colspan="2" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        <p class="text-lg font-medium text-gray-900 dark:text-white">Aucun CV trouvé</p>
+                                        <p class="text-sm mt-1">Commencez par créer votre premier CV.</p>
+                                        <a href="{{ path('app_creer') }}" class="mt-4 text-blue-600 hover:text-blue-500 font-medium">Créer un CV &rarr;</a>
                                     </div>
                                 </td>
                             </tr>
                         {% endif %}
-                    {% endfor %}
-                    
-                    {% if not has_cv %}
-                         <tr>
-                            <td colspan="2" class="py-5 px-4 text-center text-black dark:text-white">
-                                Vous n'avez pas encore créé de CV.
-                            </td>
-                        </tr>
-                    {% endif %}
                     </tbody>
                 </table>
             </div>

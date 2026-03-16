@@ -83,39 +83,13 @@ final class CvController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/pdf', name: 'app_cv_pdf', methods: ['GET', 'POST'])]
-    public function exportPdf(Request $request, Cv $cv, Pdf $snappyPdf, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    #[Route('/{id}/pdf', name: 'app_cv_pdf', methods: ['GET'])]
+    public function exportPdf(Cv $cv, Pdf $snappyPdf): Response
     {
-        if ($request->isMethod('POST')) {
-            // Validate CSRF token
-            if (!$this->isCsrfTokenValid('pdf_photo_' . $cv->getId(), $request->request->get('_token'))) {
-                return $this->redirectToRoute('app_cv_show', ['id' => $cv->getId()]);
-            }
-
-            // Ensure the user is the owner before allowing photo update
-            if ($cv->getLeClient() !== $this->getUser()) {
-                 throw $this->createAccessDeniedException();
-            }
-
-            $photoFile = $request->files->get('photo');
-            if ($photoFile) {
-                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$photoFile->guessExtension();
-
-                try {
-                    $photoFile->move(
-                        $this->getParameter('kernel.project_dir') . '/public/uploads/photos',
-                        $newFilename
-                    );
-                    
-                    $cv->setPhotoFilename($newFilename);
-                    $entityManager->flush();
-                } catch (FileException $e) {
-                    // handle exception
-                }
-            }
-        }
+        // Allow public access to PDF export
+        // if ($cv->getLeClient() !== $this->getUser()) {
+        //      throw $this->createAccessDeniedException();
+        // }
 
         $html = $this->renderView('cv/pdf.html.twig', [
             'cv' => $cv,
@@ -134,10 +108,47 @@ final class CvController extends AbstractController
                 'print-media-type' => false,
                 'dpi' => 96,
                 'zoom' => 1,
-                'javascript-delay' => 1000, // Delay to allow JS to run and resize
+                'javascript-delay' => 1000, 
             ]),
             'cv_' . $cv->getTitre() . '.pdf'
         );
+    }
+
+    #[Route('/{id}/photo', name: 'app_cv_photo', methods: ['POST'])]
+    public function uploadPhoto(Request $request, Cv $cv, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    {
+        // Validating CSRF token
+        if (!$this->isCsrfTokenValid('upload_photo_' . $cv->getId(), $request->request->get('_token'))) {
+            return $this->redirectToRoute('app_cv_show', ['id' => $cv->getId()]);
+        }
+
+        // Ensure the user is the owner before allowing photo update
+        if ($cv->getLeClient() !== $this->getUser()) {
+             throw $this->createAccessDeniedException();
+        }
+
+        $photoFile = $request->files->get('photo');
+        if ($photoFile) {
+            $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename.'-'.uniqid().'.'.$photoFile->guessExtension();
+
+            try {
+                $photoFile->move(
+                    $this->getParameter('kernel.project_dir') . '/public/uploads/photos',
+                    $newFilename
+                );
+                
+                // Remove old photo if exists? For now just overwrite reference.
+                $cv->setPhotoFilename($newFilename);
+                $entityManager->flush();
+            } catch (FileException $e) {
+                // handle exception
+                $this->addFlash('error', 'Erreur lors de l\'upload de la photo.');
+            }
+        }
+
+        return $this->redirectToRoute('app_cv_show', ['id' => $cv->getId()]);
     }
 
     #[Route('/{id}/edit', name: 'app_cv_edit', methods: ['GET', 'POST'])]

@@ -21,7 +21,7 @@
         {% endif %}
     {% endfor %}
 
-    <div class="mx-auto max-w-screen-xl px-4 md:px-8 py-8 min-h-[80vh]">
+    <div class="mx-auto max-w-screen-xl px-4 md:px-8 py-8 min-h-[80vh]" x-data="{ showPdfModal: false, showPhotoModal: false }">
         <!-- Header Section -->
         <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
             <div>
@@ -33,19 +33,25 @@
                 </p>
             </div>
             
-            <div class="flex flex-wrap items-center gap-3" x-data="{ showPdfModal: false }">
+            <div class="flex flex-wrap items-center gap-3">
                 {% if app.user == cv.leClient %}
-                    <button @click="showPdfModal = true" class="inline-flex items-center justify-center gap-2.5 rounded-md border border-primary py-2 px-6 text-center font-medium text-primary hover:bg-opacity-90 hover:bg-primary hover:text-white transition lg:px-6 xl:px-6">
+                    <a href="{{ path('app_cv_pdf', {'id': cv.id}) }}" class="inline-flex items-center justify-center gap-2.5 rounded-md border border-primary py-2 px-6 text-center font-medium text-primary hover:bg-opacity-90 hover:bg-primary hover:text-white transition lg:px-6 xl:px-6">
                         <span>
                             <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M3 13.75C3 14.1642 3.33579 14.5 3.75 14.5H16.25C16.6642 14.5 17 14.1642 17 13.75C17 13.3358 16.6642 13 16.25 13H3.75C3.33579 13 3 13.3358 3 13.75ZM3 16.75C3 17.1642 3.33579 17.5 3.75 17.5H16.25C16.6642 17.5 17 17.1642 17 16.75C17 16.3358 16.6642 16 16.25 16H3.75C3.33579 16 3 16.3358 3 16.75ZM10.5303 10.5303C10.2374 10.8232 9.76256 10.8232 9.46967 10.5303L6.21967 7.28033C5.92678 6.98744 5.92678 6.51256 6.21967 6.21967C6.51256 5.92678 6.98744 5.92678 7.28033 6.21967L9.25 8.18934V2.75C9.25 2.33579 9.58579 2 10 2C10.4142 2 10.75 2.33579 10.75 2.75V8.18934L12.7197 6.21967C13.0126 5.92678 13.4874 5.92678 13.7803 6.21967C14.0732 6.51256 14.0732 6.98744 13.7803 7.28033L10.5303 10.5303Z" fill=""/>
                             </svg>
                         </span>
                         PDF
-                    </button>
+                    </a>
 
-                    <!-- Modal -->
-                    <div x-show="showPdfModal" style="display: none;" 
+                    <!-- Photo Modal Trigger : Invisible but functional, or kept if needed. The user said: "cliquable mais pas visible". 
+                         Assuming they want it removed from UI but functionality accessible via the card.
+                         However, keeping the modal structure here is fine. We just remove the explicit button trigger if intended. 
+                         But wait, if I remove the button, how do they open it *from here*? They don't. They open it from the card.
+                    -->
+                    
+                    <!-- Include Photo Modal Structure -->
+                    <div x-show="showPhotoModal" style="display: none;" 
                          class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 py-5" 
                          x-transition:enter="ease-out duration-300" 
                          x-transition:enter-start="opacity-0" 
@@ -54,7 +60,7 @@
                          x-transition:leave-start="opacity-100" 
                          x-transition:leave-end="opacity-0">
                          
-                         <div @click.outside="showPdfModal = false" 
+                         <div @click.outside="showPhotoModal = false" 
                               class="w-full max-w-lg rounded-lg bg-white p-8 text-center shadow-2xl dark:bg-boxdark" 
                               x-transition:enter="ease-out duration-300" 
                               x-transition:enter-start="opacity-0 scale-95" 
@@ -64,29 +70,29 @@
                               x-transition:leave-end="opacity-0 scale-95">
                             
                             <h3 class="mb-2 text-2xl font-bold text-black dark:text-white">
-                                Générer le PDF
+                                Ajouter une photo
                             </h3>
                             <p class="mb-8 text-sm text-gray-500 dark:text-gray-400">
-                                Vous pouvez ajouter une photo à votre CV avant l'exportation.
+                                Cette photo s'affichera sur votre CV.
                             </p>
 
-                            <form action="{{ path('app_cv_pdf', {'id': cv.id}) }}" method="post" enctype="multipart/form-data" class="text-left">
-                                <input type="hidden" name="_token" value="{{ csrf_token('pdf_photo_' ~ cv.id) }}">
+                            <form action="{{ path('app_cv_photo', {'id': cv.id}) }}" method="post" enctype="multipart/form-data" class="text-left">
+                                <input type="hidden" name="_token" value="{{ csrf_token('upload_photo_' ~ cv.id) }}">
                                 
                                 <div class="mb-8">
                                     <label class="mb-3 block text-sm font-medium text-black dark:text-white">
-                                        Photo de profil (Optionnel)
+                                        Photo de profil
                                     </label>
-                                    <input type="file" name="photo" accept="image/png, image/jpeg" 
+                                    <input type="file" name="photo" accept="image/png, image/jpeg" required
                                            class="w-full cursor-pointer rounded-lg border border-dashed border-primary bg-gray-50 p-4 outline-none transition hover:bg-gray-100 focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:hover:bg-meta-4" />
                                 </div>
 
                                 <div class="flex gap-4">
-                                    <button type="button" @click="showPdfModal = false" class="flex-1 rounded-md border border-stroke bg-gray-100 py-3 px-6 font-medium text-black transition hover:bg-gray-200 dark:border-strokedark dark:bg-meta-4 dark:text-white dark:hover:bg-opacity-80">
+                                    <button type="button" @click="showPhotoModal = false" class="flex-1 rounded-md border border-stroke bg-gray-100 py-3 px-6 font-medium text-black transition hover:bg-gray-200 dark:border-strokedark dark:bg-meta-4 dark:text-white dark:hover:bg-opacity-80">
                                         Annuler
                                     </button>
                                     <button type="submit" class="flex-1 rounded-md bg-primary py-3 px-6 font-medium text-white transition hover:bg-opacity-90 shadow-md">
-                                        Générer
+                                        Enregistrer
                                     </button>
                                 </div>
                             </form>
@@ -130,14 +136,47 @@
 
         <!-- Structure Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            
+            {% if (is_granted('ROLE_USER') and app.user == cv.getLeClient()) or is_granted('ROLE_ADMIN') or cv.photoFilename %}
+            <div class="h-fit rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark bg-gray-50 dark:bg-meta-4 flex justify-center">
+                    <h3 class="font-bold text-lg text-black dark:text-white uppercase tracking-wider">
+                        Photo
+                    </h3>
+                </div>
+                <div class="p-6.5">
+                     <div class="mb-6 flex justify-center cursor-pointer group relative" {% if (is_granted('ROLE_USER') and app.user == cv.getLeClient()) or is_granted('ROLE_ADMIN') %}@click="showPhotoModal = true" title="Changer la photo"{% endif %}>
+                         {% if cv.photoFilename %}
+                            <img src="{{ asset('uploads/photos/' ~ cv.photoFilename) }}" alt="Photo de profil" class="h-40 w-40 rounded-full object-cover border-4 border-gray-2 shadow-lg dark:border-boxdark group-hover:opacity-80 transition-opacity">
+                         {% else %}
+                            <div class="h-40 w-40 rounded-full flex flex-col items-center justify-center bg-gray-100 dark:bg-meta-4 border-4 border-dashed border-gray-300 dark:border-strokedark hover:bg-gray-200 dark:hover:bg-opacity-80 transition gap-2">
+                                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <span class="text-sm font-medium text-gray-500">Ajouter une photo</span>
+                            </div>
+                         {% endif %}
+                         
+                         {% if (is_granted('ROLE_USER') and app.user == cv.getLeClient()) or is_granted('ROLE_ADMIN') %}
+                             <!-- Overlay icon on hover -->
+                             <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                <div class="bg-black/50 p-2 rounded-full text-white">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                </div>
+                             </div>
+                         {% endif %}
+                     </div>
+                </div>
+            </div>
+            {% endif %}
+
             {% for cateId, category in categories %}
+               {% if category.name|lower != 'accueil' and category.name|lower != 'acceuil' %}
                 <div class="h-fit rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     <div class="border-b border-stroke py-4 px-6.5 dark:border-strokedark bg-gray-50 dark:bg-meta-4 flex justify-center">
                         <h3 class="font-bold text-lg text-black dark:text-white uppercase tracking-wider">
                             {{ category.name }}
                         </h3>
                     </div>
-                    <div class="p-6.5">
+                     <div class="p-6.5">
                         <ul class="flex flex-col gap-4">
                             {% for point in category.points %}
                                 <li class="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded hover:bg-gray-100 dark:hover:bg-meta-4 transition">
@@ -165,6 +204,7 @@
                         </ul>
                     </div>
                 </div>
+                {% endif %}
             {% else %}
                 <div class="col-span-1 md:col-span-2 rounded-sm border border-stroke bg-white p-10 shadow-default dark:border-strokedark dark:bg-boxdark text-center">
                     <p class="text-xl font-medium text-black dark:text-white mb-4">Ce CV est encore vide.</p>
