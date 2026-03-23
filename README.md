@@ -397,5 +397,3 @@ echo ""
 sudo chmod +x nom_du_script.sh
 sudo ./nom_du_script.sh
 ```
-
-'application (si des problèmes vous arrive faites moi un issues**
