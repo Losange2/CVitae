@@ -1,7 +1,7 @@
 # 📄 CVitae
 # ***Sur une première VM  ***
-# Créer un fichier et insérer le contenue 
-# Vous pouvez modifiez les valeurs de DB_NAME, DB_USER et DB_PASS pour changer le nom de la base de données et le nom et mot de passe de l'utilisateur
+## Créer un fichier et insérer le contenue 
+### Vous pouvez modifiez les valeurs de DB_NAME, DB_USER et DB_PASS pour changer le nom de la base de données et le nom et mot de passe de l'utilisateur
 ```
 #!/bin/bash
 # =============================================================================
