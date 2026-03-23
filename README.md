@@ -1,5 +1,5 @@
 # 📄 CVitae
-# ***Sur une première VM  ***
+# Sur une première VM 
 ## Créer un fichier et insérer le contenue 
 ### Vous pouvez modifiez les valeurs de DB_NAME, DB_USER et DB_PASS pour changer le nom de la base de données et le nom et mot de passe de l'utilisateur
 ```
@@ -117,7 +117,7 @@ sudo ./nom_du_script.sh
 ## Script d'Installation de Docker
 
 ### Créer un fichier et mettez le contenu 
-# N'oubliez pas de modifiez le DB_USER/PASS/NAME/HOST (pour l'IP faites un ip a sur la VM qui contient votre base de données pour l'obtenir)
+#### N'oubliez pas de modifiez le DB_USER/PASS/NAME/HOST (pour l'IP faites un ip a sur la VM qui contient votre base de données pour l'obtenir)
 ```bash
 #!/bin/bash
 # =============================================================================
