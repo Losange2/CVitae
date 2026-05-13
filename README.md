@@ -278,6 +278,11 @@ FROM php:8.3-cli
 
 RUN apt update && apt install -y \
     git unzip zip libzip-dev \
+    libxrender1 libxext6 libfontconfig1 xfonts-75dpi xfonts-base \
+    && curl -fsSL https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
+        -o /tmp/wkhtmltox.deb \
+    && apt install -y /tmp/wkhtmltox.deb \
+    && rm /tmp/wkhtmltox.deb \
     && docker-php-ext-install zip
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -314,10 +319,21 @@ docker exec symfony-php bash -c \
     "cd /var/www/html && git clone https://github.com/Losange2/CVitae"
 ok "CVitae cloné."
 
-log "Installation des extensions PHP (zip, pdo, pdo_mysql)..."
-docker exec symfony-php bash -c "apt update && apt install -y git unzip zip libzip-dev default-mysql-client \
+log "Installation des extensions PHP dans le conteneur PHP..."
+docker exec symfony-php bash -c "apt update && apt install -y \
+    git unzip zip libzip-dev default-mysql-client \
+    libxrender1 libxext6 libfontconfig1 xfonts-75dpi xfonts-base \
     && docker-php-ext-install zip pdo pdo_mysql"
 ok "Extensions PHP installées."
+
+log "Installation de wkhtmltopdf depuis GitHub (paquet non disponible dans les dépôts Debian récents)..."
+docker exec symfony-php bash -c "
+    curl -fsSL https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
+        -o /tmp/wkhtmltox.deb \
+    && apt install -y /tmp/wkhtmltox.deb \
+    && rm /tmp/wkhtmltox.deb
+"
+ok "wkhtmltopdf installé."
 
 log "Installation des dépendances Composer (sans exécuter les scripts)..."
 docker exec symfony-php bash -c \
@@ -329,15 +345,30 @@ docker exec symfony-php bash -c "cat > /var/www/html/CVitae/.env.local << EOF
 APP_ENV=dev
 APP_DEBUG=1
 DATABASE_URL=\"mysql://${DB_USER}:${DB_PASS}@${DB_HOST}:3306/${DB_NAME}?serverVersion=10.6\"
+WKHTMLTOPDF_PATH=/usr/local/bin/wkhtmltopdf
 EOF"
 ok ".env.local configuré."
+
+log "Correction du chemin wkhtmltopdf dans la configuration KnpSnappy..."
+docker exec symfony-php bash -c "mkdir -p /var/www/html/CVitae/config/packages && cat > /var/www/html/CVitae/config/packages/knp_snappy.yaml << 'YAMLEOF'
+knp_snappy:
+    pdf:
+        enabled: true
+        binary: '/usr/local/bin/wkhtmltopdf'
+        options: []
+    image:
+        enabled: true
+        binary: '/usr/local/bin/wkhtmltoimage'
+        options: []
+YAMLEOF"
+ok "knp_snappy.yaml configuré avec le chemin Linux."
 
 log "Nettoyage du cache Symfony..."
 docker exec symfony-php bash -c "cd /var/www/html/CVitae && php bin/console cache:clear"
 ok "Cache nettoyé."
 
 # =============================================================================
-#  7. Redémarrage et vérification de pdo_mysql
+#  7. Redémarrage et vérifications
 # =============================================================================
 log "Redémarrage du conteneur PHP..."
 docker compose restart php
@@ -349,6 +380,14 @@ if [[ "$PDO_CHECK" == "pdo_mysql" ]]; then
     ok "Extension pdo_mysql détectée."
 else
     warn "pdo_mysql non détectée. Vérifiez manuellement avec : docker exec symfony-php php -m | grep pdo"
+fi
+
+log "Vérification de wkhtmltopdf..."
+WKHTMLTOPDF_CHECK=$(docker exec symfony-php wkhtmltopdf --version 2>/dev/null || true)
+if [[ -n "$WKHTMLTOPDF_CHECK" ]]; then
+    ok "wkhtmltopdf détecté : ${WKHTMLTOPDF_CHECK}"
+else
+    warn "wkhtmltopdf non détecté. Vérifiez manuellement avec : docker exec symfony-php wkhtmltopdf --version"
 fi
 
 # =============================================================================
